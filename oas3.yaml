@@ -59,48 +59,48 @@ paths:
                   password: 'password'
     
 
-  /students:
+  /utente:
     get:
       description: >-
-        Gets the list of students.
-        It is possible to show students by their role /students?role={role}
-      summary: View all students
+        Ottieni la lista degli utenti.
+        E' possibile mostrare gli utenti in base al loro ruolo /utente?ruolo={ruolo}
+      summary: Mostra tutti gli utenti
       parameters:
         - in: query
-          name: role
+          name: ruolo
           schema:
             type: string
-            enum: [user, poweruser, admin]
+            enum: [turista, pubblica amministrazione]
       responses:
         '200':
-          description: 'Collection of students'
+          description: 'Insieme di utenti'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Student'
+       /*           $ref: '#/components/schemas/Utenti'*/
     post:
       description: >-
-        Creates a new student in the system.
-      summary: Register a new student
+        Creazione di un nuovo utente nel sistema.
+      summary: Registrazione nuovo utente
       requestBody:
         content:
           application/json:
             schema: 
-              $ref: '#/components/schemas/Student'
+             /* $ref: '#/components/schemas/Utenti'*/
             examples:
               example1:
                 value:
                   email: 'mario.rossi@unitn.it'
       responses:
         '201':
-          description: 'Student created. Link in the Location header'
+          description: 'Utente creato. Link nell'intestazione della posizione'
           headers:
             'Location':
               schema:
                 type: string
-              description: Link to the newly created student.
+              description: Link all'utente ceato recentemente.
 
   /books:
     get:
@@ -352,5 +352,6 @@ components:
             The booklending is not overdue if the end date is in the future and the status is 'active'.
             The booklending is not overdue if the status is 'expired'.
             The number of days is calculated as the difference between the current date and the end date.
+
 
 

@@ -102,69 +102,70 @@ paths:
                 type: string
               description: Link all'utente ceato recentemente.
 
-  /books:
+  /Itineraio:
     get:
       description: >-
-        Gets the list of books.
-        It is possible to show books by their status /books?status={status}
-      summary: View all books
+        Ottieni la lista di itinerari.
+        E' possibile vedere le specifiche dell'itinerario /Itinerario?specifiche={specifiche}
+      summary: Mostra tutti gli itinerari
       parameters:
         - in: query
-          name: status
+          name: specifiche
           schema:
             type: string
-            enum: [available, lended]
+           /* enum: [] */
       responses:
         '200':
-          description: 'Collection of books'
+          description: 'Insieme di itinerari'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Book'
+                 /* $ref: '#/components/schemas/Itinerari' */
     post:
       description: >-
-        Creates a new book in the system.
-      summary: Add a new book
+        Creates nuovo itinerario.
+      summary: Aggiungi itinerario
       requestBody:
         content:
           application/json:
             schema: 
-              $ref: '#/components/schemas/Book'
+            /*  $ref: '#/components/schemas/Itinerario' */
             examples:
               example1:
                 value:
-                  title: 'The Great Gatsby'
+                  title: 'Tour dei musei'
       responses:
         '201':
-          description: 'Book created. Link in the Location header'
+          description: 'Itinerario creato. Link nell'intestazione Posizione'
           headers:
             'Location':
               schema:
                 type: string
-              description: Link to the newly created book.
+              description: Link all'itinerario recentemente creato.
   /books/{bookId}:
     get:
       description: >-
-        Gets the book with the given ID.
-      summary: View a book
+        Ottieni l'itinerario con il nome dato.
+      summary: Mostra itinerario
       parameters:
         - in: path
-          name: bookId
+          name: nomeItinerario
           required: true
           schema:
             type: string
-          description: 'ID of the book'
+          description: 'Nome dell'itinerario'
       responses:
         '200':
-          description: 'Book found'
+          description: 'Itinerario trovato'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Book'
+             /*   $ref: '#/components/schemas/Itinerario' */
         '404':
-          description: 'Book not found'
+          description: 'Itinerario non trovato'
+          //////////////////////////////////////////////////////////////////////////////////////////////////
     delete:
       description: >-
         Deletes the book with the given ID.
@@ -352,6 +353,7 @@ components:
             The booklending is not overdue if the end date is in the future and the status is 'active'.
             The booklending is not overdue if the status is 'expired'.
             The number of days is calculated as the difference between the current date and the end date.
+
 
 
 

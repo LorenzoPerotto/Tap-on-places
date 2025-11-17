@@ -165,23 +165,6 @@ paths:
              /*   $ref: '#/components/schemas/Itinerario' */
         '404':
           description: 'Itinerario non trovato'
-          //////////////////////////////////////////////////////////////////////////////////////////////////
-    delete:
-      description: >-
-        Deletes the book with the given ID.
-      summary: Delete a book
-      parameters:
-        - in: path
-          name: bookId
-          required: true
-          schema:
-            type: string
-          description: 'ID of the book'
-      responses:
-        '204':
-          description: 'Book deleted'
-        '404':
-          description: 'Book not found'
 
   /booklendings:
     get:
@@ -353,6 +336,7 @@ components:
             The booklending is not overdue if the end date is in the future and the status is 'active'.
             The booklending is not overdue if the status is 'expired'.
             The number of days is calculated as the difference between the current date and the end date.
+
 
 
 

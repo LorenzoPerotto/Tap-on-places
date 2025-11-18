@@ -125,7 +125,7 @@ paths:
                  /* $ref: '#/components/schemas/Itinerari' */
     post:
       description: >-
-        Creates nuovo itinerario.
+        Creare nuovo itinerario.
       summary: Aggiungi itinerario
       requestBody:
         content:
@@ -336,6 +336,7 @@ components:
             The booklending is not overdue if the end date is in the future and the status is 'active'.
             The booklending is not overdue if the status is 'expired'.
             The number of days is calculated as the difference between the current date and the end date.
+
 
 
 

@@ -5,12 +5,12 @@ info:
   description: API per i turisti per trovare le attività di Trento.
   license:
     name: MIT
-/*servers:
+servers:
   - url: http://localhost:8080/api/v1
     description: Localhost
-  - url: https://easy-lib.onrender.com/api/v1
+  - url: https://TapOnPlaces.onrender.com/api/v1
     description: render.com
-    */
+    
 paths:
 
   /authentications:
@@ -147,24 +147,24 @@ paths:
   /books/{bookId}:
     get:
       description: >-
-        Ottieni l'itinerario con il nome dato.
-      summary: Mostra itinerario
+        Ottieni l'attività con il nome dato.
+      summary: Mostra attività
       parameters:
         - in: path
-          name: nomeItinerario
+          name: nomeAttività
           required: true
           schema:
             type: string
-          description: 'Nome dell'itinerario'
+          description: 'Nome dell'attività'
       responses:
         '200':
-          description: 'Itinerario trovato'
+          description: 'Attività trovata'
           content:
             application/json:
               schema:
              /*   $ref: '#/components/schemas/Itinerario' */
         '404':
-          description: 'Itinerario non trovato'
+          description: 'Attività non trovata'
 
   /booklendings:
     get:
@@ -336,6 +336,7 @@ components:
             The booklending is not overdue if the end date is in the future and the status is 'active'.
             The booklending is not overdue if the status is 'expired'.
             The number of days is calculated as the difference between the current date and the end date.
+
 
 
 

@@ -79,7 +79,7 @@ paths:
               schema:
                 type: array
                 items:
-       /*           $ref: '#/components/schemas/Utenti'*/
+                $ref: '#/components/schemas/Utente'
     post:
       description: >-
         Creazione di un nuovo utente nel sistema.
@@ -88,7 +88,7 @@ paths:
         content:
           application/json:
             schema: 
-             /* $ref: '#/components/schemas/Utenti'*/
+                $ref: '#/components/schemas/Utente'
             examples:
               example1:
                 value:
@@ -100,9 +100,9 @@ paths:
             'Location':
               schema:
                 type: string
-              description: Link all'utente ceato recentemente.
+              description: Link all'utente creato recentemente.
 
-  /Itineraio:
+  /itinerario:
     get:
       description: >-
         Ottieni la lista di itinerari.
@@ -122,7 +122,7 @@ paths:
               schema:
                 type: array
                 items:
-                 /* $ref: '#/components/schemas/Itinerari' */
+                $ref: '#/components/schemas/Itinerario' 
     post:
       description: >-
         Creare nuovo itinerario.
@@ -131,7 +131,7 @@ paths:
         content:
           application/json:
             schema: 
-            /*  $ref: '#/components/schemas/Itinerario' */
+              $ref: '#/components/schemas/Itinerario' 
             examples:
               example1:
                 value:
@@ -162,7 +162,7 @@ paths:
           content:
             application/json:
               schema:
-             /*   $ref: '#/components/schemas/Itinerario' */
+                $ref: '#/components/schemas/Itinerario' 
         '404':
           description: 'Attività non trovata'
 
@@ -256,42 +256,49 @@ components:
 
   schemas:
 
-    Student:
+    Utente:
       type: object
       required:
+        - nome
+        - cognome
         - email
       properties:
         self:
           type: string
-          description: 'Link to the student'
+          description: 'Link all'utente'
+        nome:
+          type: string
+          description: 'Nome dell'utente'
+        cognome:
+          type: string
+          description: 'Cognome dell'utente'
         email:
           type: string
-          description: 'Email address of the student'
+          description: 'Indirizzo Email dell'utente'
     
-    Book:
+    Itinerario:
       type: object
       required:
-        - title
-        - author
-        - ISBN
-        - status
+        - titolo
+        - tempo
+        - tipologia
+        - budget
       properties:
         self:
           type: string
-          description: 'Link to the book'
-        title:
+          description: 'Link all'itinerario'
+        titolo:
           type: string
-          description: 'Title of the book'
-        author:
+          description: 'Titolo dell'itinerario'
+        tempo:
           type: string
-          description: 'Author of the book'
-        ISBN:
+          description: 'Tempo dell'itinerario'
+        tipologia:
           type: string
-          description: 'ISBN of the book'
-        status:
-          type: string
-          enum: [available, lended]
-          description: 'Tells whether the book is currently available or not'
+          description: 'Tipologia dell'itinerario'
+        budget:
+          type: int
+          description: 'Budget disponibile per l'itinerario'
     
     Booklending:
       type: object
@@ -336,6 +343,7 @@ components:
             The booklending is not overdue if the end date is in the future and the status is 'active'.
             The booklending is not overdue if the status is 'expired'.
             The number of days is calculated as the difference between the current date and the end date.
+
 
 
 

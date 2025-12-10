@@ -13,7 +13,7 @@ servers:
     
 paths:
 
-  /authentications:
+  /autenticazioni:
     post:
       summary: Autenticazione utenti
       description: >-
@@ -30,7 +30,7 @@ paths:
                     type: boolean
                     description: 'Vero se l'autenticazione è avvenuta con successo'
                   token:
-                    type: int
+                    type: integer
                     description: 'JWT token'
         '401':
           description: 'Email o password errati'
@@ -59,7 +59,7 @@ paths:
                   password: 'password'
     
 
-  /utente:
+  /utenti:
     get:
       description: >-
         Ottieni la lista degli utenti.
@@ -102,7 +102,7 @@ paths:
                 type: string
               description: Link all'utente creato recentemente.
 
-  /itinerario:
+  /itinerari:
     get:
       description: >-
         Ottieni la lista di itinerari.
@@ -144,7 +144,7 @@ paths:
               schema:
                 type: string
               description: Link all'itinerario recentemente creato.
-  /books/{bookId}:
+  /attività/{nomeAttività}:
     get:
       description: >-
         Ottieni l'attività con il nome dato.
@@ -162,7 +162,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Itinerario' 
+                $ref: '#/components/schemas/Attività' 
         '404':
           description: 'Attività non trovata'
 
@@ -297,9 +297,21 @@ components:
           type: string
           description: 'Tipologia dell'itinerario'
         budget:
-          type: int
+          type: integer
           description: 'Budget disponibile per l'itinerario'
-    
+
+    Attività:
+    type: object
+      required:
+        - nome
+      properties:
+        self:
+          type: string
+          description: 'Link all'attività'
+        nome:
+          type: string
+          description: 'nome dell'attività'
+
     Booklending:
       type: object
       required:
@@ -343,6 +355,7 @@ components:
             The booklending is not overdue if the end date is in the future and the status is 'active'.
             The booklending is not overdue if the status is 'expired'.
             The number of days is calculated as the difference between the current date and the end date.
+
 
 
 

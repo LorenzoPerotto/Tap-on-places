@@ -165,6 +165,26 @@ paths:
         '404':
           description: 'Attività non trovata'
 
+/informazioni:
+    get:
+      description: >-
+        Ottieni la lista di informazioni.
+      summary: Mostra tutte le informazioni
+      parameters:
+        - in: query
+          name: specifiche
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'Insieme di informazioni'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                $ref: '#/components/schemas/Informazione' 
+    
 /api:
 get:
   security:
@@ -251,3 +271,24 @@ components:
         nome:
           type: string
           description: 'nome dell'attività'
+
+    Informazione:
+      type: object
+      required:
+        - attività
+        - età
+        - orario
+      properties:
+        self:
+          type: string
+          description: 'Link all'informazione'
+        attività:
+          type: string
+          description: 'Attività più richieste'
+        età:
+          type: integer
+          description: 'Età media dei visitanti'
+        orario:
+          type: time
+          description: 'Orari più richiesti'
+      

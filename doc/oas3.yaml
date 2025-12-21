@@ -113,7 +113,6 @@ paths:
           name: specifiche
           schema:
             type: string
-           /* enum: [] */
       responses:
         '200':
           description: 'Insieme di itinerari'
@@ -166,72 +165,33 @@ paths:
         '404':
           description: 'Attività non trovata'
 
-  /booklendings:
+/informazioni:
     get:
       description: >-
-        Gets the list of booklendings.
-        It is possible to show booklendings by studentId /booklendings?studentId={student}
-      summary: View all booklendings
-      security:
-        - TokenQueryAuth: []
-          XAccessTokenHeaderAuth: []
+        Ottieni la lista di informazioni.
+      summary: Mostra tutte le informazioni
       parameters:
         - in: query
-          name: studentId
+          name: specifiche
           schema:
             type: string
-            description: 'ID of the student'
       responses:
         '200':
-          description: 'Collection of booklendings'
+          description: 'Insieme di informazioni'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Booklending'
-    post:
-      summary: Borrow a book
-      description: >-
-        Creates a new booklending.
-        Token must be passed in the header.
-        The student and book must already exist in the system.
-        The book must be available.
-        The book status will be set to 'lended'.
-        The booklending will be created with the current date as start date.
-        The booklending will be created with the end date set to 30 days from now.
-        The booklending will be created with the status 'active'.
-      security:
-        - TokenQueryAuth: []
-          XAccessTokenHeaderAuth: []
-      responses:
-        '201':
-          description: 'Booklending created. Link in the Location header'
-          headers:
-            'Location':
-              schema:
-                type: string
-              description: Link to the newly created booklending.
-      requestBody:
-        description: >-
-          The booklending object to be created.
-          The student and book must already exist in the system.
-          The book must be available.
-          The book status will be set to 'lended'.
-          The booklending will be created with the current date as start date.
-          The booklending will be created with the end date set to 30 days from now.
-          The booklending will be created with the status 'active'.
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Booklending'
-            examples:
-              example1:
-                value:
-                  student: 'http://localhost:8080/api/v1/students/1'
-                  book: 'http://localhost:8080/api/v1/books/1'
-          
+                $ref: '#/components/schemas/Informazione' 
+    
+/api:
+get:
+  security:
+  - TokenQueryAuth: []
+    XAccessTokenHeaderAuth: []
+  
+  
 components:
 
   securitySchemes:
@@ -312,55 +272,23 @@ components:
           type: string
           description: 'nome dell'attività'
 
-    Booklending:
+    Informazione:
       type: object
       required:
-      - student
-      - book
+        - attività
+        - età
+        - orario
       properties:
         self:
           type: string
-          description: 'Link to the booklending'
-        student:
+          description: 'Link all'informazione'
+        attività:
           type: string
-          description: 'Link to the student'
-        book:
-          type: string
-          description: 'Link to the book'
-        start_date:
-          type: string
-          format: date-time
-          description: 'Start date of the booklending'
-          default: '${currentDate}'
-        end_date:
-          type: string
-          format: date-time
-          description: 'End date of the booklending'
-        status:
-          type: string
-          enum: [active, expired]
-          description: 'Tells whether the booklending is currently active or not'
-        overdue:  
-          type: boolean
-          description: >-
-            Tells whether the booklending is currently overdue or not.
-            The booklending is overdue if the end date is in the past and the status is 'active'.
-            The booklending is not overdue if the end date is in the future and the status is 'active'.
-            The booklending is not overdue if the status is 'expired'.
-        overdue_days:
+          description: 'Attività più richieste'
+        età:
           type: integer
-          description: >-
-            Number of days the booklending is overdue.
-            The booklending is overdue if the end date is in the past and the status is 'active'.
-            The booklending is not overdue if the end date is in the future and the status is 'active'.
-            The booklending is not overdue if the status is 'expired'.
-            The number of days is calculated as the difference between the current date and the end date.
-
-
-
-
-
-
-
-
-
+          description: 'Età media dei visitanti'
+        orario:
+          type: time
+          description: 'Orari più richiesti'
+      

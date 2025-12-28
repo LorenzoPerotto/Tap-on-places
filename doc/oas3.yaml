@@ -28,15 +28,15 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    description: 'Vero se l'autenticazione è avvenuta con successo'
+                    description: 'Vero se l\'autenticazione è avvenuta con successo'
                   token:
-                    type: integer
-                    description: 'JWT token'
+                    type: string
+                    description: 'Codice a 4 cifre per conferma autenticazione'
         '401':
           description: 'Email o password errati'
       requestBody:
         description: >-
-          L'Email e la password devono essere passati nel corpo
+          L\'Email e la password devono essere passati nel corpo
         required: true
         content:
           application/json:
@@ -48,10 +48,10 @@ paths:
               properties:
                 email:
                   type: string
-                  description: 'Indirizzo email dell'utente'
+                  description: 'Indirizzo email dell\'utente'
                 password:
                   type: string
-                  description: 'Password dell'utente'
+                  description: 'Password dell\'utente'
             examples:
               example1:
                 value:
@@ -63,14 +63,14 @@ paths:
     get:
       description: >-
         Ottieni la lista degli utenti.
-        E' possibile mostrare gli utenti in base al loro ruolo /utente?ruolo={ruolo}
+        è possibile mostrare gli utenti in base al loro ruolo /utente?ruolo={ruolo}
       summary: Mostra tutti gli utenti
       parameters:
         - in: query
           name: ruolo
           schema:
             type: string
-            enum: [turista, pubblica amministrazione]
+            enum: [utente_comunale, utente_normale]
       responses:
         '200':
           description: 'Insieme di utenti'
@@ -79,7 +79,7 @@ paths:
               schema:
                 type: array
                 items:
-                $ref: '#/components/schemas/Utente'
+                  $ref: '#/components/schemas/Utente'
     post:
       description: >-
         Creazione di un nuovo utente nel sistema.
@@ -95,18 +95,18 @@ paths:
                   email: 'mario.rossi@unitn.it'
       responses:
         '201':
-          description: 'Utente creato. Link nell'intestazione della posizione'
+          description: 'Utente creato. Link nell\'intestazione della posizione'
           headers:
             'Location':
               schema:
                 type: string
-              description: Link all'utente creato recentemente.
+              description: Link all\'utente creato recentemente.
 
   /itinerari:
     get:
       description: >-
         Ottieni la lista di itinerari.
-        E' possibile vedere le specifiche dell'itinerario /Itinerario?specifiche={specifiche}
+        è possibile vedere le specifiche dell\'itinerario /Itinerario?specifiche={specifiche}
       summary: Mostra tutti gli itinerari
       parameters:
         - in: query
@@ -121,7 +121,7 @@ paths:
               schema:
                 type: array
                 items:
-                $ref: '#/components/schemas/Itinerario' 
+                  $ref: '#/components/schemas/Itinerario' 
     post:
       description: >-
         Creare nuovo itinerario.
@@ -137,16 +137,16 @@ paths:
                   title: 'Tour dei musei'
       responses:
         '201':
-          description: 'Itinerario creato. Link nell'intestazione Posizione'
+          description: 'Itinerario creato. Link nell\'intestazione Posizione'
           headers:
             'Location':
               schema:
                 type: string
-              description: Link all'itinerario recentemente creato.
+              description: Link all\'itinerario recentemente creato.
   /attività/{nomeAttività}:
     get:
       description: >-
-        Ottieni l'attività con il nome dato.
+        Ottieni l\'attività con il nome dato.
       summary: Mostra attività
       parameters:
         - in: path
@@ -154,7 +154,7 @@ paths:
           required: true
           schema:
             type: string
-          description: 'Nome dell'attività'
+          description: 'Nome dell\'attività'
       responses:
         '200':
           description: 'Attività trovata'
@@ -165,7 +165,7 @@ paths:
         '404':
           description: 'Attività non trovata'
 
-/informazioni:
+  /informazioni:
     get:
       description: >-
         Ottieni la lista di informazioni.
@@ -183,13 +183,13 @@ paths:
               schema:
                 type: array
                 items:
-                $ref: '#/components/schemas/Informazione' 
+                  $ref: '#/components/schemas/Informazione' 
     
 /api:
-get:
-  security:
-  - TokenQueryAuth: []
-    XAccessTokenHeaderAuth: []
+  get:
+    security:
+      - TokenQueryAuth: []
+      XAccessTokenHeaderAuth: []
   
   
 components:
@@ -225,16 +225,16 @@ components:
       properties:
         self:
           type: string
-          description: 'Link all'utente'
+          description: 'Link all\'utente'
         nome:
           type: string
-          description: 'Nome dell'utente'
+          description: 'Nome dell\'utente'
         cognome:
           type: string
-          description: 'Cognome dell'utente'
+          description: 'Cognome dell\'utente'
         email:
           type: string
-          description: 'Indirizzo Email dell'utente'
+          description: 'Indirizzo Email dell\'utente'
     
     Itinerario:
       type: object
@@ -246,49 +246,52 @@ components:
       properties:
         self:
           type: string
-          description: 'Link all'itinerario'
+          description: 'Link all\'itinerario'
         titolo:
           type: string
-          description: 'Titolo dell'itinerario'
+          description: 'Titolo dell\'itinerario'
         tempo:
           type: string
-          description: 'Tempo dell'itinerario'
+          description: 'Tempo dell\'itinerario'
         tipologia:
           type: string
-          description: 'Tipologia dell'itinerario'
+          description: 'Tipologia dell\'itinerario'
         budget:
           type: integer
-          description: 'Budget disponibile per l'itinerario'
+          description: 'Budget disponibile per l\'itinerario'
 
     Attività:
-    type: object
+      type: object
       required:
         - nome
       properties:
         self:
           type: string
-          description: 'Link all'attività'
+          description: 'Link all\'attività'
         nome:
           type: string
-          description: 'nome dell'attività'
+          description: 'nome dell\'attività'
+        numPersone:
+          type: integer
+          description: 'Numero di volte che questa attività è stata cercata dagli utenti'
 
     Informazione:
       type: object
       required:
-        - attività
-        - età
+        - numPersone
+        - etàMedia
         - orario
       properties:
         self:
           type: string
-          description: 'Link all'informazione'
-        attività:
-          type: string
-          description: 'Attività più richieste'
-        età:
+          description: 'Link all\'informazione'
+        numPersone:
+          type: integer
+          description: 'Numero di volte che questa attività è stata cercata dagli utenti'
+        etàMedia:
           type: integer
           description: 'Età media dei visitanti'
         orario:
-          type: time
+          type: string
           description: 'Orari più richiesti'
       

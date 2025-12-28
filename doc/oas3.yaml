@@ -10,7 +10,7 @@ servers:
     description: Localhost
   - url: https://TapOnPlaces.onrender.com/api/v1
     description: render.com
-    
+
 paths:
 
   /autenticazioni:
@@ -57,13 +57,12 @@ paths:
                 value:
                   email: 'mario.rossi@unitn.it'
                   password: 'password'
-    
 
   /utenti:
     get:
       description: >-
         Ottieni la lista degli utenti.
-        è possibile mostrare gli utenti in base al loro ruolo /utente?ruolo={ruolo}
+        È possibile mostrare gli utenti in base al loro ruolo /utenti?ruolo={ruolo}
       summary: Mostra tutti gli utenti
       parameters:
         - in: query
@@ -87,8 +86,8 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: 
-                $ref: '#/components/schemas/Utente'
+            schema:
+              $ref: '#/components/schemas/Utente'
             examples:
               example1:
                 value:
@@ -106,7 +105,7 @@ paths:
     get:
       description: >-
         Ottieni la lista di itinerari.
-        è possibile vedere le specifiche dell\'itinerario /Itinerario?specifiche={specifiche}
+        È possibile vedere le specifiche dell\'itinerario /Itinerario?specifiche={specifiche}
       summary: Mostra tutti gli itinerari
       parameters:
         - in: query
@@ -121,7 +120,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Itinerario' 
+                  $ref: '#/components/schemas/Itinerario'
     post:
       description: >-
         Creare nuovo itinerario.
@@ -129,8 +128,8 @@ paths:
       requestBody:
         content:
           application/json:
-            schema: 
-              $ref: '#/components/schemas/Itinerario' 
+            schema:
+              $ref: '#/components/schemas/Itinerario'
             examples:
               example1:
                 value:
@@ -143,10 +142,11 @@ paths:
               schema:
                 type: string
               description: Link all\'itinerario recentemente creato.
+
   /attività/{nomeAttività}:
     get:
       description: >-
-        Ottieni l\'attività con il nome dato.
+        Ottieni l'attività con il nome dato.
       summary: Mostra attività
       parameters:
         - in: path
@@ -161,55 +161,41 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Attività' 
+                $ref: '#/components/schemas/Attività'
         '404':
           description: 'Attività non trovata'
 
   /informazioni:
     get:
-      description: >-
-        Ottieni la lista di informazioni.
-      summary: Mostra tutte le informazioni
-      parameters:
-        - in: query
-          name: specifiche
-          schema:
-            type: string
+      summary: Mostra tutte le informazioni dettagliate sulle attività
+      description: Accessibile solo agli utenti comunali
       responses:
         '200':
-          description: 'Insieme di informazioni'
+          description: Lista informazioni
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Informazione' 
-    
-/api:
-  get:
-    security:
-      - TokenQueryAuth: []
-      XAccessTokenHeaderAuth: []
-  
-  
+                  $ref: '#/components/schemas/Informazione'
+
 components:
 
   securitySchemes:
-    
-    XAccessTokenHeaderAuth: # arbitrary name for the security scheme
+    XAccessTokenHeaderAuth:
       description: >-
         The API authentication.
         The API key must be passed in the header 'x-access-token'.
-        The API key must be a valid JWT token.
+        The API key must be un JWT valido.
       type: apiKey
       in: header
       name: x-access-token
-    
-    TokenQueryAuth: # arbitrary name for the security scheme
+
+    TokenQueryAuth:
       description: >-
         The API authentication.
-        The API key must be passed in the query string 'token'.
-        The API key must be a valid JWT token.
+        The API key must be passato nella query string 'token'.
+        The API key deve essere un JWT valido.
       type: apiKey
       in: query
       name: token
@@ -235,7 +221,7 @@ components:
         email:
           type: string
           description: 'Indirizzo Email dell\'utente'
-    
+
     Itinerario:
       type: object
       required:
@@ -270,7 +256,7 @@ components:
           description: 'Link all\'attività'
         nome:
           type: string
-          description: 'nome dell\'attività'
+          description: 'Nome dell\'attività'
         numPersone:
           type: integer
           description: 'Numero di volte che questa attività è stata cercata dagli utenti'
@@ -290,7 +276,7 @@ components:
           description: 'Numero di volte che questa attività è stata cercata dagli utenti'
         etàMedia:
           type: integer
-          description: 'Età media dei visitanti'
+          description: 'Età media dei visitatori'
         orario:
           type: string
           description: 'Orari più richiesti'

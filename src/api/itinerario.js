@@ -1,15 +1,32 @@
 import express from 'express';
 import Itinerary from '../models/itinerary.js'; 
 import { authMiddleware } from '../middleware/auth.js'; 
+
 const router = express.Router();
 
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const itinerari = await Itinerary.find().exec();
+    const { tipologia, tempo, budget } = req.query;
+
+    const filter = {};
+
+    if (tipologia) {
+      filter.tipologia = tipologia;
+    }
+
+    if (tempo) {
+      filter.tempo = { $lte: Number(tempo) };
+    }
+
+    if (budget) {
+      filter.budget = { $lte: Number(budget) };
+    }
+
+    const itinerari = await Itinerary.find(filter).exec();
 
     const lista = itinerari.map(it => ({
-      self: `/api/v1/itinerari/${it._id}`, // link alle specifiche
       nome: it.nome,
+      self: `/api/v1/itinerari/${it._id}`
     }));
 
     res.status(200).json(lista);
@@ -28,7 +45,7 @@ router.get('/', authMiddleware, async (req, res) => {
 
     if (nome) {
       itinerari = await Itinerary.find({
-        nome: { $regex: nome, $options: 'i' } // ricerca case-insensitive
+        nome: { $regex: nome, $options: 'i' } 
       }).select('nome');
     } else {
       itinerari = await Itinerary.find().select('nome');
@@ -70,4 +87,5 @@ router.get('/:id', authMiddleware, async (req, res) => {
 });
 
 export default router;
+
 

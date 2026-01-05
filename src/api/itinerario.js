@@ -1,12 +1,8 @@
 import express from 'express';
-import Itinerary from '../models/itinerary.js'; // Mongoose model
+import Itinerary from '../models/itinerary.js'; 
 import { authMiddleware } from '../middleware/auth.js'; 
 const router = express.Router();
 
-// =========================
-// GET /itinerari - lista itinerari
-// Mostra solo nome, link alle specifiche e percorso
-// =========================
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const itinerari = await Itinerary.find().exec();
@@ -23,10 +19,33 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-// =========================
-// GET /itinerari/:id - dettagli di un itinerario
-// Tutti i campi pubblici, senza link, senza dati comunali, senza dettagli attività
-// =========================
+
+router.get('/', authMiddleware, async (req, res) => {
+  try {
+    const { nome } = req.query;
+
+    let itinerari;
+
+    if (nome) {
+      itinerari = await Itinerary.find({
+        nome: { $regex: nome, $options: 'i' } // ricerca case-insensitive
+      }).select('nome');
+    } else {
+      itinerari = await Itinerary.find().select('nome');
+    }
+
+    const result = itinerari.map(it => ({
+      nome: it.nome,
+      self: `/api/v1/itinerari/${it._id}`
+    }));
+
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json({ error: 'Errore nel recupero degli itinerari' });
+  }
+});
+
+
 router.get('/:id', authMiddleware, async (req, res) => {
   try {
     const it = await Itinerary.findById(req.params.id).exec();
@@ -51,3 +70,4 @@ router.get('/:id', authMiddleware, async (req, res) => {
 });
 
 export default router;
+

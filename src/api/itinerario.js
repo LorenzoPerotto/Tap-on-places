@@ -1,5 +1,5 @@
 import express from 'express';
-import Itinerary from '../models/itinerary.js'; 
+import Itinerary from '../models/Itinerary.js'; 
 import { authMiddleware } from '../middleware/auth.js'; 
 
 const router = express.Router();
@@ -90,6 +90,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
 });
 
 export default router;
+
 
 
 

@@ -41,14 +41,16 @@ router.get('/', authMiddleware, async (req, res) => {
   try {
     const { nome } = req.query;
 
-    let itinerari;
+    if (!nome) {
+      return res.status(400).json({ error: 'Il campo "nome" è obbligatorio' });
+    }
 
-    if (nome) {
-      itinerari = await Itinerary.find({
-        nome: { $regex: nome, $options: 'i' } 
-      }).select('nome');
-    } else {
-      itinerari = await Itinerary.find().select('nome');
+    const itinerari = await Itinerary.find({
+      nome: { $regex: nome, $options: 'i' } 
+    }).select('nome');
+
+    if (itinerari.length === 0) {
+      return res.status(404).json({ message: 'Nessun itinerario trovato con questo nome' });
     }
 
     const result = itinerari.map(it => ({
@@ -58,6 +60,7 @@ router.get('/', authMiddleware, async (req, res) => {
 
     res.status(200).json(result);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Errore nel recupero degli itinerari' });
   }
 });
@@ -87,5 +90,6 @@ router.get('/:id', authMiddleware, async (req, res) => {
 });
 
 export default router;
+
 
 

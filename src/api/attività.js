@@ -1,5 +1,5 @@
 import express from 'express';
-import Activity from '../models/activity.js';
+import Activity from '../models/Activity.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -33,3 +33,4 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 export default router;
+

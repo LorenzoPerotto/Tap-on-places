@@ -1,6 +1,9 @@
 import express from 'express';
+import bcrypt from 'bcrypt'; // necessario per la cifratura delle password
 import User from '../models/user.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
+import { sendConfirmationCode } from '../utils/emailUtils.js'; // invio codice email
+import { hashPassword, comparePassword } from '../utils/passwordUtils.js'; // cifratura password
 
 const router = express.Router();
 
@@ -46,13 +49,16 @@ router.post('/', async (req, res) => {
     // genera codice a 4 cifre
     const codiceConferma = Math.floor(1000 + Math.random() * 9000);
 
-    // qui inserisci la funzione di invio mail, es: sendEmail(email, codiceConferma)
-    console.log(`Invio codice a ${email}: ${codiceConferma}`);
+    // invio codice via email
+    await sendConfirmationCode(email, codiceConferma);
+
+    // cifra la password prima di salvare
+    const hashedPassword = await hashPassword(password);
 
     // crea utente nello stato "non confermato"
     const newUser = new User({
       email,
-      password,
+      password: hashedPassword,
       nickname,
       nome,
       cognome,
@@ -78,7 +84,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Registrazione
+// POST /utenti/conferma => conferma registrazione
 router.post('/conferma', async (req, res) => {
   try {
     const { email, codice } = req.body;
@@ -105,7 +111,7 @@ router.post('/conferma', async (req, res) => {
   }
 });
 
-//Login
+// POST /utenti/login => login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -121,8 +127,8 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Email o password non corretti' });
     }
 
-    // confronta password (supponendo che siano salvate cifrate con bcrypt)
-    const passwordMatches = await bcrypt.compare(password, user.password);
+    // confronta password usando utils
+    const passwordMatches = await comparePassword(password, user.password);
     if (!passwordMatches) {
       return res.status(401).json({ error: 'Email o password non corretti' });
     }

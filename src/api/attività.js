@@ -34,6 +34,35 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+//dettagli attività
+router.get('/:id', authMiddleware, async (req, res) => {
+  try {
+    const activityId = req.params.id;
+
+    // trova l'attività nel database
+    const activity = await Activity.findById(activityId).exec();
+
+    if (!activity) {
+      return res.status(404).json({ error: 'Attività non trovata' });
+    }
+
+    // costruisce l'oggetto di risposta con solo i campi visibili all'utente
+    const dettaglio = {
+      nome: activity.nome,
+      tipo: activity.tipo,
+      tipologia: activity.tipologia,
+      tempo: activity.tempo,
+      budget: activity.budget,
+      descrizione: activity.descrizione,
+    };
+
+    res.status(200).json(dettaglio);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore nel recupero dell\'attività' });
+  }
+});
+
 //salva attività
 router.post('/salva/:id', authMiddleware, async (req, res) => {
   try {
@@ -58,5 +87,6 @@ router.post('/salva/:id', authMiddleware, async (req, res) => {
 });
 
 export default router;
+
 
 

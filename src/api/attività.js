@@ -1,9 +1,11 @@
 import express from 'express';
 import Activity from '../models/Activity.js';
+import User from '../models/user.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+//ricerca attività per nome
 router.get('/', authMiddleware, async (req, res) => {
   try {
     const { nome } = req.query;
@@ -32,5 +34,29 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+//salva attività
+router.post('/salva/:id', authMiddleware, async (req, res) => {
+  try {
+    const user = req.loggedUser; 
+    const activityId = req.params.id;
+
+    const activity = await Activity.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ error: 'Attività non trovata' });
+    }
+
+    if (!user.savedActivities.includes(activityId)) {
+      user.savedActivities.push(activityId);
+      await user.save();
+    }
+
+    res.status(200).json({ message: 'Attività salvata con successo' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore nel salvataggio dell\'attività' });
+  }
+});
+
 export default router;
+
 

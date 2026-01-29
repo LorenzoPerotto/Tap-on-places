@@ -40,7 +40,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 //ricerca itinerario tramite nome
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/search', authMiddleware, async (req, res) => {
   try {
     const { nome } = req.query;
 
@@ -92,10 +92,10 @@ router.get('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-//salvataggio itinerario
+//salva itinerario
 router.post('/salva/:id', authMiddleware, async (req, res) => {
   try {
-    const user = req.loggedUser; // recuperato dal middleware
+    const user = req.user; 
     const itineraryId = req.params.id;
 
     // trova itinerario
@@ -203,6 +203,7 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 export default router;
+
 
 
 

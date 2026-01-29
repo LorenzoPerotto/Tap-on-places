@@ -1,5 +1,4 @@
 import express from 'express';
-import bcrypt from 'bcrypt'; // necessario per la cifratura delle password
 import User from '../models/user.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import { sendConfirmationCode } from '../utils/emailUtils.js'; // invio codice email
@@ -20,7 +19,7 @@ function isSecurePassword(password) {
   return re.test(password);
 }
 
-// POST /utenti => registrazione
+// Registrazione
 router.post('/', async (req, res) => {
   try {
     const { email, password, nickname, nome, cognome, dataNascita } = req.body;
@@ -84,7 +83,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// POST /utenti/conferma => conferma registrazione
+// Conferma registrazione
 router.post('/conferma', async (req, res) => {
   try {
     const { email, codice } = req.body;
@@ -111,7 +110,7 @@ router.post('/conferma', async (req, res) => {
   }
 });
 
-// POST /utenti/login => login
+// Login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -125,6 +124,11 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email }).exec();
     if (!user) {
       return res.status(401).json({ error: 'Email o password non corretti' });
+    }
+
+    // login con conferma dell'email
+    if (!user.confermato) {
+      return res.status(403).json({ error: 'Account non confermato' });
     }
 
     // confronta password usando utils
@@ -150,4 +154,5 @@ router.post('/login', async (req, res) => {
 });
 
 export default router;
+
 

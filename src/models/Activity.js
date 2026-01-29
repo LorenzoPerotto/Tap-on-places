@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const activitySchema = new mongoose.Schema(
   {
@@ -15,34 +15,17 @@ const activitySchema = new mongoose.Schema(
       lat: { type: Number, required: true },
       lng: { type: Number, required: true }
     },
-    tipologia: {
-      type: String
-    },
-    tempo: {
-      type: Number // minuti
-    },
-    budget: {
-      type: Number
-    },
-    descrizione: {
-      type: String
-    },
+    tipologia: { type: String },
+    tempo: { type: Number, default: 0 }, // minuti
+    budget: { type: Number, default: 0 },
+    descrizione: { type: String },
 
     // Dati visibili solo agli utenti comunali
-    numPersone: {
-      type: Number,
-      default: 0
-    },
-    etaMedia: {
-      type: Number
-    },
-    orarioAffluenza: {
-      type: String
-    }
+    numPersone: { type: Number, default: 0 },
+    etaMedia: { type: Number },
+    orarioAffluenza: { type: String }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
-module.exports = mongoose.model('Activity', activitySchema);
+export default mongoose.model('Activity', activitySchema);

@@ -65,7 +65,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
 //salva attività
 router.post('/salva/:id', authMiddleware, async (req, res) => {
   try {
-    const user = req.loggedUser; 
+    const user = req.user; 
     const activityId = req.params.id;
 
     const activity = await Activity.findById(activityId);
@@ -86,6 +86,7 @@ router.post('/salva/:id', authMiddleware, async (req, res) => {
 });
 
 export default router;
+
 
 
 

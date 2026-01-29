@@ -1,7 +1,6 @@
 import express from 'express';
 import Activity from '../models/Activity.js';
-import User from '../models/user.js';
-import authMiddleware from '../middleware/authMiddleware.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -24,7 +23,7 @@ router.get('/', authMiddleware, async (req, res) => {
 
     const result = activities.map(act => ({
       nome: act.nome,
-      self: `/api/v1/attività/${act._id}`
+      self: `/api/v1/attivita/${act._id}`
     }));
 
     res.status(200).json(result);
@@ -87,6 +86,7 @@ router.post('/salva/:id', authMiddleware, async (req, res) => {
 });
 
 export default router;
+
 
 
 

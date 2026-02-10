@@ -3,7 +3,6 @@ import YAML from 'yamljs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Necessario per usare __dirname con ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -12,9 +11,7 @@ const swaggerDocument = YAML.load(
   path.join(__dirname, '../../doc/oas3.yaml')
 );
 
-/**
- * Configurazione Swagger
- */
+
 const swaggerOptions = {
   explorer: true,
   swaggerOptions: {
@@ -30,3 +27,4 @@ export const swaggerSetup = (app) => {
     swaggerUi.setup(swaggerDocument, swaggerOptions)
   );
 };
+

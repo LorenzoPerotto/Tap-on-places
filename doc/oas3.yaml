@@ -1,42 +1,28 @@
 openapi: 3.0.4
+
 info:
   version: '1.0'
   title: "Tap-on-places OpenAPI 3.0"
-  description: API per i turisti per trovare le attività di Trento.
+  description: API per i turisti e per il comune di Trento per la gestione di attività, itinerari e informazioni aggregate.
   license:
     name: MIT
+
 servers:
   - url: http://localhost:8080/api/v1
     description: Localhost
   - url: https://TapOnPlaces.onrender.com/api/v1
     description: render.com
-    
+
+security:
+  - XAccessTokenHeaderAuth: []
+
 paths:
 
   /autenticazioni:
     post:
       summary: Autenticazione utenti
-      description: >-
-        Autenticazione e ritorno di un codice a 4 cifre come conferma
-      responses:
-        '200':
-          description: 'Registrazione avvenuta con successo'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    description: 'Vero se l\'autenticazione è avvenuta con successo'
-                  token:
-                    type: string
-                    description: 'Codice a 4 cifre per conferma autenticazione'
-        '401':
-          description: 'Email o password errati'
+      description: Autenticazione utente e ritorno di un token JWT
       requestBody:
-        description: >-
-          L\'Email e la password devono essere passati nel corpo
         required: true
         content:
           application/json:
@@ -48,23 +34,35 @@ paths:
               properties:
                 email:
                   type: string
-                  description: 'Indirizzo email dell\'utente'
+                  description: Indirizzo email dell'utente
                 password:
                   type: string
-                  description: 'Password dell\'utente'
+                  description: Password dell'utente
             examples:
               example1:
                 value:
-                  email: 'mario.rossi@unitn.it'
-                  password: 'password'
-    
+                  email: mario.rossi@unitn.it
+                  password: password
+      responses:
+        '200':
+          description: Autenticazione avvenuta con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  token:
+                    type: string
+                    description: Token JWT
+        '401':
+          description: Email o password errati
 
   /utenti:
     get:
-      description: >-
-        Ottieni la lista degli utenti.
-        è possibile mostrare gli utenti in base al loro ruolo /utente?ruolo={ruolo}
       summary: Mostra tutti gli utenti
+      description: Ottieni la lista degli utenti, eventualmente filtrata per ruolo.
       parameters:
         - in: query
           name: ruolo
@@ -73,41 +71,36 @@ paths:
             enum: [utente_comunale, utente_normale]
       responses:
         '200':
-          description: 'Insieme di utenti'
+          description: Insieme di utenti
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Utente'
+
     post:
-      description: >-
-        Creazione di un nuovo utente nel sistema.
       summary: Registrazione nuovo utente
+      description: Creazione di un nuovo utente nel sistema.
       requestBody:
+        required: true
         content:
           application/json:
-            schema: 
-                $ref: '#/components/schemas/Utente'
-            examples:
-              example1:
-                value:
-                  email: 'mario.rossi@unitn.it'
+            schema:
+              $ref: '#/components/schemas/Utente'
       responses:
         '201':
-          description: 'Utente creato. Link nell\'intestazione della posizione'
+          description: Utente creato con successo
           headers:
-            'Location':
+            Location:
+              description: Link all'utente creato
               schema:
                 type: string
-              description: Link all\'utente creato recentemente.
 
   /itinerari:
     get:
-      description: >-
-        Ottieni la lista di itinerari.
-        è possibile vedere le specifiche dell\'itinerario /Itinerario?specifiche={specifiche}
       summary: Mostra tutti gli itinerari
+      description: Ottieni la lista di itinerari, filtrabili tramite specifiche.
       parameters:
         - in: query
           name: specifiche
@@ -115,61 +108,36 @@ paths:
             type: string
       responses:
         '200':
-          description: 'Insieme di itinerari'
+          description: Insieme di itinerari
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Itinerario' 
+                  $ref: '#/components/schemas/Itinerario'
+
     post:
-      description: >-
-        Creare nuovo itinerario.
       summary: Aggiungi itinerario
+      description: Creazione di un nuovo itinerario.
       requestBody:
+        required: true
         content:
           application/json:
-            schema: 
-              $ref: '#/components/schemas/Itinerario' 
-            examples:
-              example1:
-                value:
-                  title: 'Tour dei musei'
+            schema:
+              $ref: '#/components/schemas/Itinerario'
       responses:
         '201':
-          description: 'Itinerario creato. Link nell\'intestazione Posizione'
+          description: Itinerario creato con successo
           headers:
-            'Location':
+            Location:
+              description: Link all'itinerario creato
               schema:
                 type: string
-              description: Link all\'itinerario recentemente creato.
-  /attività/{nomeAttività}:
-    get:
-      description: >-
-        Ottieni l\'attività con il nome dato.
-      summary: Mostra attività
-      parameters:
-        - in: path
-          name: nomeAttività
-          required: true
-          schema:
-            type: string
-          description: 'Nome dell\'attività'
-      responses:
-        '200':
-          description: 'Attività trovata'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Attività' 
-        '404':
-          description: 'Attività non trovata'
 
   /informazioni:
     get:
-      description: >-
-        Ottieni la lista di informazioni.
       summary: Mostra tutte le informazioni
+      description: Restituisce informazioni aggregate su attività e itinerari.
       parameters:
         - in: query
           name: specifiche
@@ -177,42 +145,72 @@ paths:
             type: string
       responses:
         '200':
-          description: 'Insieme di informazioni'
+          description: Insieme di informazioni
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Informazione' 
-    
-/api:
-  get:
-    security:
-      - TokenQueryAuth: []
-      XAccessTokenHeaderAuth: []
-  
-  
+                  $ref: '#/components/schemas/Informazione'
+
+  /informazioni/statistiche-globali:
+    get:
+      summary: Statistiche globali
+      description: Restituisce statistiche aggregate globali per il comune.
+      responses:
+        '200':
+          description: Statistiche globali
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatisticheGlobali'
+
+  /informazioni/attivita/{id}:
+    get:
+      summary: Informazioni su una specifica attività
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Informazioni attività
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Informazione'
+        '404':
+          description: Attività non trovata
+
+  /informazioni/itinerario/{id}:
+    get:
+      summary: Informazioni su un itinerario specifico
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Informazioni itinerario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Informazione'
+        '404':
+          description: Itinerario non trovato
+
 components:
 
   securitySchemes:
-    
-    XAccessTokenHeaderAuth: # arbitrary name for the security scheme
-      description: >-
-        The API authentication.
-        The API key must be passed in the header 'x-access-token'.
-        The API key must be a valid JWT token.
+    XAccessTokenHeaderAuth:
       type: apiKey
       in: header
       name: x-access-token
-    
-    TokenQueryAuth: # arbitrary name for the security scheme
-      description: >-
-        The API authentication.
-        The API key must be passed in the query string 'token'.
-        The API key must be a valid JWT token.
-      type: apiKey
-      in: query
-      name: token
+      description: Token JWT passato tramite header
 
   schemas:
 
@@ -225,17 +223,13 @@ components:
       properties:
         self:
           type: string
-          description: 'Link all\'utente'
         nome:
           type: string
-          description: 'Nome dell\'utente'
         cognome:
           type: string
-          description: 'Cognome dell\'utente'
         email:
           type: string
-          description: 'Indirizzo Email dell\'utente'
-    
+
     Itinerario:
       type: object
       required:
@@ -246,52 +240,79 @@ components:
       properties:
         self:
           type: string
-          description: 'Link all\'itinerario'
         titolo:
           type: string
-          description: 'Titolo dell\'itinerario'
         tempo:
           type: string
-          description: 'Tempo dell\'itinerario'
         tipologia:
           type: string
-          description: 'Tipologia dell\'itinerario'
         budget:
           type: integer
-          description: 'Budget disponibile per l\'itinerario'
-
-    Attività:
-      type: object
-      required:
-        - nome
-      properties:
-        self:
-          type: string
-          description: 'Link all\'attività'
-        nome:
-          type: string
-          description: 'nome dell\'attività'
-        numPersone:
-          type: integer
-          description: 'Numero di volte che questa attività è stata cercata dagli utenti'
 
     Informazione:
       type: object
       required:
+        - self
+        - tipo
+        - nome
         - numPersone
-        - etàMedia
+        - etMedia
         - orario
       properties:
         self:
           type: string
-          description: 'Link all\'informazione'
+        tipo:
+          type: string
+          enum: [attivita, itinerario]
+        nome:
+          type: string
+        tipologia:
+          type: string
+        tempo:
+          type: string
+        budget:
+          type: integer
         numPersone:
           type: integer
-          description: 'Numero di volte che questa attività è stata cercata dagli utenti'
-        etàMedia:
+        etMedia:
           type: integer
-          description: 'Età media dei visitanti'
         orario:
           type: string
-          description: 'Orari più richiesti'
+
+    StatisticheGlobali:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        totalItineraries:
+          type: integer
+        totalActivities:
+          type: integer
+        totalFavorites:
+          type: integer
+        etMediaUtenti:
+          type: integer
+        topAttivita:
+          type: array
+          items:
+            type: object
+            properties:
+              nome:
+                type: string
+              tipo:
+                type: string
+              visite:
+                type: integer
+        topItinerari:
+          type: array
+          items:
+            type: object
+            properties:
+              nome:
+                type: string
+              tipologia:
+                type: string
+              visite:
+                type: integer
+
       

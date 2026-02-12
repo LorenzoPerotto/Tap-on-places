@@ -17,7 +17,7 @@ const swaggerOptions = {
   swaggerOptions: {
     persistAuthorization: true, // mantiene il token JWT tra le chiamate
   },
-  customSiteTitle: 'EasyLib API Documentation',
+  customSiteTitle: 'Tap-on-places API Documentation',
 };
 
 export const swaggerSetup = (app) => {
@@ -27,4 +27,5 @@ export const swaggerSetup = (app) => {
     swaggerUi.setup(swaggerDocument, swaggerOptions)
   );
 };
+
 

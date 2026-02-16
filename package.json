@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "start:dev": "nodemon index.js",
+    "start": "node frontend/index.html",
+    "start:dev": "nodemon frontend/index.html",
     "lint": "eslint . --ext .js",
     "test": "echo && exit 0"
   },

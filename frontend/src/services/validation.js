@@ -1,7 +1,3 @@
-/**
- * Funzioni di validazione per form di registrazione e login
- */
-
 export function validateEmail(email) {
   if (!email) {
     return {

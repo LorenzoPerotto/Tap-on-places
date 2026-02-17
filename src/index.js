@@ -9,7 +9,6 @@ import { swaggerSetup } from './config/swagger.js';
 import utentiRouter from './api/utenti.js';
 import itinerariRouter from './api/itinerario.js';
 import attivitaRouter from './api/attività.js';
-import autenticazioniRouter from './api/autenticazioni.js';
 import informazioniRouter from './api/informazioni.js';
 
 dotenv.config();
@@ -44,7 +43,6 @@ swaggerSetup(app);
 
 
 //Routing API v1
-app.use('/api/v1/autenticazioni', autenticazioniRouter);
 app.use('/api/v1/utenti', utentiRouter);
 app.use('/api/v1/itinerari', itinerariRouter);
 app.use('/api/v1/attivita', attivitaRouter);

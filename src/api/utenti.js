@@ -1,6 +1,6 @@
 import express from 'express';
 import User from '../models/user.js';
-import { authMiddleware } from '../middleware/authMiddleware.js';
+import { authMiddleware } from '../middleware/auth.js';
 import { sendConfirmationCode } from '../utils/emailUtils.js'; // invio codice email
 import { hashPassword, comparePassword } from '../utils/passwordUtils.js'; // cifratura password
 
@@ -154,5 +154,6 @@ router.post('/login', async (req, res) => {
 });
 
 export default router;
+
 
 

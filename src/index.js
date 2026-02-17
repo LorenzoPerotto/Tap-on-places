@@ -8,7 +8,7 @@ import { swaggerSetup } from './config/swagger.js';
 // Router API
 import utentiRouter from './api/utenti.js';
 import itinerariRouter from './api/itinerario.js';
-import attivitaRouter from './api/attivita.js';
+import attivitaRouter from './api/attività.js';
 import autenticazioniRouter from './api/autenticazioni.js';
 import informazioniRouter from './api/informazioni.js';
 

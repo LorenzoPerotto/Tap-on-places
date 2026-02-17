@@ -1,6 +1,6 @@
 import express from 'express';
 import Activity from '../models/Activity.js';
-import { authMiddleware } from '../middleware/authMiddleware.js';
+import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -86,6 +86,7 @@ router.post('/salva/:id', authMiddleware, async (req, res) => {
 });
 
 export default router;
+
 
 
 

@@ -17,14 +17,16 @@ import informazioniRouter from './api/informazioni.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Carica le variabili d'ambiente dal file .env nella root
+// Carica il .env dalla root del progetto
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-// ----- Configurazione server -----
+// Test variabile
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Middleware globali
+// ----- Middleware globali -----
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true
@@ -45,7 +47,9 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
-  .then(() => console.log('Connesso a MongoDB'))
+  .then(() => {
+    console.log('Connesso a MongoDB');
+  })
   .catch((error) => {
     console.error('Errore connessione MongoDB:', error);
     process.exit(1);

@@ -1,13 +1,13 @@
 import express from 'express';
-import Itinerary from '../models/Itinerary.js'; 
-import Activity from '../models/activity.js';
-import User from '../models/user.js';
-import { authMiddleware } from '../middleware/auth.js'; 
+import Itinerary from '../models/Itinerary.js';
+import Activity from '../models/Activity.js';
+import User from '../models/User.js';
+import { authMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
 //ricerca itinerari tramite le preferenze 
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { tipologia, tempo, budget } = req.query;
 
@@ -40,7 +40,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 //ricerca itinerario tramite nome
-router.get('/search', authMiddleware, async (req, res) => {
+router.get('/search', async (req, res) => {
   try {
     const { nome } = req.query;
 
@@ -49,12 +49,8 @@ router.get('/search', authMiddleware, async (req, res) => {
     }
 
     const itinerari = await Itinerary.find({
-      nome: { $regex: nome, $options: 'i' } 
+      nome: { $regex: nome, $options: 'i' }
     }).select('nome');
-
-    if (itinerari.length === 0) {
-      return res.status(404).json({ message: 'Nessun itinerario trovato con questo nome' });
-    }
 
     const result = itinerari.map(it => ({
       nome: it.nome,
@@ -69,7 +65,7 @@ router.get('/search', authMiddleware, async (req, res) => {
 });
 
 //specifiche itinerario
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const it = await Itinerary.findById(req.params.id).exec();
 
@@ -95,7 +91,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
 //salva itinerario
 router.post('/salva/:id', authMiddleware, async (req, res) => {
   try {
-    const user = req.user; 
+    const user = req.user;
     const itineraryId = req.params.id;
 
     // trova itinerario

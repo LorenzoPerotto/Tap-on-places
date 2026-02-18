@@ -110,8 +110,7 @@ const api = {
   // POI (punti di interesse) - alias per attività con ricerca vuota
   poi: {
     getAll() {
-      // Restituisce tutte le attività (il backend richiede un parametro nome)
-      return apiClient.get('/attivita', { params: { nome: '' } })
+      return apiClient.get('/attivita')
     }
   }
 }

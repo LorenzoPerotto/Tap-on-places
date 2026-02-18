@@ -28,6 +28,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = null
     awaitingConfirmation.value = false
     pendingEmail.value = null
+    pendingCodice.value = null
     localStorage.removeItem('token')
     localStorage.removeItem('user')
   }
@@ -46,11 +47,14 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const pendingCodice = ref(null)
+
   async function register(data) {
     try {
       const response = await api.auth.register(data)
       awaitingConfirmation.value = true
       pendingEmail.value = data.email
+      pendingCodice.value = response.data.codiceConferma || null
       return { success: true, message: response.data.message }
     } catch (error) {
       return {
@@ -93,6 +97,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     awaitingConfirmation,
     pendingEmail,
+    pendingCodice,
     isAuthenticated,
     isAdmin,
     userFullName,

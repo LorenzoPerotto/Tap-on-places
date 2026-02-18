@@ -24,8 +24,9 @@
         <h2>Menù Navigazione</h2>
         <select class="language-select" v-model="selectedLanguage">
           <option value="it">🇮🇹 Italiano</option>
-          <option value="en">🇬🇧 English</option>
-          <option value="de">🇩🇪 Deutsch</option>
+          <option value="en" disabled>🇬🇧 English — in lavorazione</option>
+          <option value="de" disabled>🇩🇪 Deutsch — in lavorazione</option>
+          <option value="pl" disabled>🇵🇱 Polski — in lavorazione</option>
         </select>
       </div>
 

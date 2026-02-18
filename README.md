@@ -76,7 +76,7 @@ Aprire un nuovo terminale:
 
 -npm run dev
 
-Aprire l'URL mostrato nel terminale (es. http://localhost:5173).
+Aprire l'URL mostrato nel terminale.
 
 # Documentazione API
 

@@ -9,19 +9,17 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   tipo: { type: String, enum: ['normale', 'comunale'], default: 'normale' },
+  codiceConferma: { type: Number, default: null },
+  confermato: { type: Boolean, default: false },
   savedItineraries: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Itinerary' }],
   savedActivities: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Activity' }]
 }, { timestamps: true });
 
-// Hash della password prima del salvataggio
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+// Il hashing della password viene gestito direttamente nella route di registrazione
+// tramite passwordUtils.js per evitare doppio hashing
 
 // Metodo per confrontare la password
-userSchema.methods.comparePassword = function(password) {
+userSchema.methods.comparePassword = function (password) {
   return bcrypt.compare(password, this.password);
 };
 

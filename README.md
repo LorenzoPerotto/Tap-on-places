@@ -27,8 +27,8 @@ Tap-on-Places/
 │
 ├── frontend/
 │
-└── doc/
-│ └──oas3.yaml
+│ doc/
+└──└──oas3.yaml
 
 # Requisiti
 

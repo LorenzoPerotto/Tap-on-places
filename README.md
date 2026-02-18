@@ -22,6 +22,7 @@ Tap-on-Places:
 ├── ├── models/
 ├── ├── middleware/
 ├── ├── utils/
+├── ├── index.js
 │
 ├── frontend/
 │
@@ -43,11 +44,12 @@ Tap-on-Places:
 # Variabili d’ambiente
 
 Il progetto utilizza variabili d’ambiente per:
+-Proteggere credenziali sensibili
+-Separare configurazioni di sviluppo e produzione
+Il file .env non è presente su GitHub per motivi di sicurezza.
 
-- Proteggere credenziali
-- Separare configurazioni di sviluppo e produzione
-
-Il file `.env` non è presente su git hub ma soltanto in locale per proteggere i dati sensibili, ma è fornito un file .env.example da copiare con il seguente comando: cp .env.example .env
+È disponibile il file .env.example, che può essere copiato con: cp .env.example .env
+Successivamente, compilare il file .env con le proprie credenziali.
 
 # Avvio del progetto in locale
 
@@ -91,7 +93,7 @@ Procedura:
 
 1. L’utente effettua login 
 2. Se le credenziali sono corrette, viene generato un token JWT
-3. Il token deve essere inviato nelle richieste protette tramite header:
+3. Il token deve essere inviato nelle richieste protette tramite header: x-access-token: <token>
 
 Il middleware verifica:
 - Presenza del token

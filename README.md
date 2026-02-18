@@ -123,7 +123,7 @@ Possibili configurazioni:
 
 //Le variabili non devono mai essere hardcoded nel codice.
 
-# 👨‍💻 Tecnologie utilizzate
+# Tecnologie utilizzate
 
 - Node.js
 - Express

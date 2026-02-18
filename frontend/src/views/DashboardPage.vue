@@ -27,7 +27,7 @@
             <div class="stat-icon">👥</div>
             <div class="stat-info">
               <h3>Utenti Totali</h3>
-              <p class="stat-number">{{ stats.totalUsers || 0 }}</p>
+              <p class="stat-number">{{ stats.totalUsers ?? '—' }}</p>
               <small>Registrati sulla piattaforma</small>
             </div>
           </div>
@@ -36,7 +36,7 @@
             <div class="stat-icon">🗺️</div>
             <div class="stat-info">
               <h3>Itinerari Creati</h3>
-              <p class="stat-number">{{ stats.totalItineraries || 0 }}</p>
+              <p class="stat-number">{{ stats.totalItineraries ?? '—' }}</p>
               <small>Percorsi disponibili</small>
             </div>
           </div>
@@ -45,7 +45,7 @@
             <div class="stat-icon">📍</div>
             <div class="stat-info">
               <h3>Attività</h3>
-              <p class="stat-number">{{ stats.totalActivities || 0 }}</p>
+              <p class="stat-number">{{ stats.totalActivities ?? '—' }}</p>
               <small>Luoghi e punti d'interesse</small>
             </div>
           </div>
@@ -54,7 +54,7 @@
             <div class="stat-icon">⭐</div>
             <div class="stat-info">
               <h3>Preferiti Totali</h3>
-              <p class="stat-number">{{ stats.totalFavorites || 0 }}</p>
+              <p class="stat-number">{{ stats.totalFavorites ?? '—' }}</p>
               <small>Salvataggi degli utenti</small>
             </div>
           </div>
@@ -66,176 +66,91 @@
           <div class="dashboard-grid">
 
             <div class="dashboard-card">
-              <h3>Visitatori per Fascia Oraria</h3>
-              <div class="chart-placeholder">
-                <div class="chart-bar" style="height: 60%">
-                  <span>Mattina</span>
-                  <span class="bar-value">120</span>
-                </div>
-                <div class="chart-bar" style="height: 85%">
-                  <span>Pomeriggio</span>
-                  <span class="bar-value">180</span>
-                </div>
-                <div class="chart-bar" style="height: 45%">
-                  <span>Sera</span>
-                  <span class="bar-value">85</span>
-                </div>
+              <h3>Età Media Utenti</h3>
+              <div class="eta-media-display">
+                <div class="eta-media-number">{{ stats.etMediaUtenti || '—' }}</div>
+                <div class="eta-media-label">anni</div>
               </div>
-              <p class="chart-note">📊 Dati simulati - Integrazione real-time in sviluppo</p>
+              <p class="chart-note">📊 Calcolata dalle date di nascita degli utenti registrati</p>
             </div>
 
             <div class="dashboard-card">
-              <h3>Visitatori per Età Media</h3>
-              <div class="age-distribution">
-                <div class="age-group">
-                  <span class="age-label">18-25</span>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: 35%"></div>
+              <h3>Dettaglio Attività</h3>
+              <div class="info-list" v-if="detailedInfo.length > 0">
+                <div 
+                  v-for="info in detailedInfo.filter(i => i.tipo === 'attivita').slice(0, 5)" 
+                  :key="info.nome"
+                  class="info-item"
+                >
+                  <div class="info-item-name">{{ info.nome }}</div>
+                  <div class="info-item-stats">
+                    <span>👥 {{ info.numPersone }} salvataggi</span>
+                    <span v-if="info.etMedia">📊 Età media: {{ info.etMedia }}</span>
                   </div>
-                  <span class="age-value">35%</span>
-                </div>
-                <div class="age-group">
-                  <span class="age-label">26-40</span>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: 45%"></div>
-                  </div>
-                  <span class="age-value">45%</span>
-                </div>
-                <div class="age-group">
-                  <span class="age-label">41-60</span>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: 25%"></div>
-                  </div>
-                  <span class="age-value">25%</span>
-                </div>
-                <div class="age-group">
-                  <span class="age-label">60+</span>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: 15%"></div>
-                  </div>
-                  <span class="age-value">15%</span>
                 </div>
               </div>
+              <p v-else class="chart-note">Nessun dato disponibile</p>
             </div>
           </div>
         </div>
 
-        <!-- Luoghi più visitati -->
+        <!-- Luoghi più salvati -->
         <div class="dashboard-section">
-          <h2>🏆 Top Luoghi Visitati</h2>
+          <h2>🏆 Top Luoghi Salvati</h2>
+          <div class="dashboard-card wide">
+            <table class="data-table" v-if="stats.topAttivita && stats.topAttivita.length > 0">
+              <thead>
+                <tr>
+                  <th>Posizione</th>
+                  <th>Luogo</th>
+                  <th>Tipo</th>
+                  <th>Salvataggi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(att, index) in stats.topAttivita" :key="att.nome">
+                  <td>{{ index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1 }}</td>
+                  <td><strong>{{ att.nome }}</strong></td>
+                  <td>{{ att.tipo }}</td>
+                  <td>{{ att.visite }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <p v-else class="chart-note">Nessuna attività salvata dagli utenti</p>
+            <p class="chart-note">📊 Dati reali dal database</p>
+          </div>
+        </div>
+
+        <!-- Top Itinerari -->
+        <div class="dashboard-section" v-if="stats.topItinerari && stats.topItinerari.length > 0">
+          <h2>🗺️ Top Itinerari Salvati</h2>
           <div class="dashboard-card wide">
             <table class="data-table">
               <thead>
                 <tr>
                   <th>Posizione</th>
-                  <th>Luogo</th>
-                  <th>Visite</th>
-                  <th>Età Media</th>
-                  <th>Fascia Oraria Picco</th>
+                  <th>Itinerario</th>
+                  <th>Tipologia</th>
+                  <th>Salvataggi</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>🥇</td>
-                  <td><strong>MUSE</strong></td>
-                  <td>1,245</td>
-                  <td>32 anni</td>
-                  <td>14:00 - 17:00</td>
-                </tr>
-                <tr>
-                  <td>🥈</td>
-                  <td><strong>Piazza Duomo</strong></td>
-                  <td>980</td>
-                  <td>38 anni</td>
-                  <td>11:00 - 13:00</td>
-                </tr>
-                <tr>
-                  <td>🥉</td>
-                  <td><strong>Castello del Buonconsiglio</strong></td>
-                  <td>756</td>
-                  <td>41 anni</td>
-                  <td>10:00 - 12:00</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td><strong>Doss Trento</strong></td>
-                  <td>623</td>
-                  <td>29 anni</td>
-                  <td>16:00 - 19:00</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td><strong>Teatro Sociale</strong></td>
-                  <td>412</td>
-                  <td>45 anni</td>
-                  <td>20:00 - 22:00</td>
+                <tr v-for="(it, index) in stats.topItinerari" :key="it.nome">
+                  <td>{{ index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1 }}</td>
+                  <td><strong>{{ it.nome }}</strong></td>
+                  <td>{{ it.tipologia || '—' }}</td>
+                  <td>{{ it.visite }}</td>
                 </tr>
               </tbody>
             </table>
-            <p class="chart-note">📊 Dati simulati - Sistema di tracking in sviluppo</p>
           </div>
         </div>
 
-        <!-- Domanda Trasporti -->
-        <div class="dashboard-section">
-          <h2>🚌 Domanda Trasporti Pubblici</h2>
-          <div class="dashboard-grid">
-            <div class="transport-card">
-              <div class="transport-icon">🚌</div>
-              <h3>Autobus</h3>
-              <div class="transport-stats">
-                <p><strong>Capacità:</strong> 450/500</p>
-                <div class="capacity-bar">
-                  <div class="capacity-fill" style="width: 90%"></div>
-                </div>
-                <p class="capacity-status warning">⚠️ Alta affluenza</p>
-              </div>
-            </div>
-
-            <div class="transport-card">
-              <div class="transport-icon">🚂</div>
-              <h3>Treni</h3>
-              <div class="transport-stats">
-                <p><strong>Capacità:</strong> 320/600</p>
-                <div class="capacity-bar">
-                  <div class="capacity-fill" style="width: 53%"></div>
-                </div>
-                <p class="capacity-status ok">✅ Normale</p>
-              </div>
-            </div>
-
-            <div class="transport-card">
-              <div class="transport-icon">🚡</div>
-              <h3>Funivia</h3>
-              <div class="transport-stats">
-                <p><strong>Capacità:</strong> 85/120</p>
-                <div class="capacity-bar">
-                  <div class="capacity-fill" style="width: 71%"></div>
-                </div>
-                <p class="capacity-status ok">✅ Normale</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Nota implementazione -->
-        <div class="implementation-note">
-          <h3>ℹ️ Nota sui Dati</h3>
-          <p>
-            I dati visualizzati in questa dashboard sono simulati a scopo dimostrativo.
-            L'integrazione con sistemi real-time di monitoraggio affluenza, analytics e 
-            tracking utenti sarà implementata nelle prossime versioni della piattaforma.
-          </p>
-          <p>
-            <strong>Funzionalità future:</strong>
-          </p>
-          <ul>
-            <li>📊 Analytics real-time con grafici interattivi</li>
-            <li>📱 Heatmap di movimento turisti</li>
-            <li>🔔 Alert automatici per sovraccarico</li>
-            <li>📈 Trend storici e previsioni</li>
-            <li>📥 Export dati in CSV/Excel</li>
-          </ul>
+        <!-- Messaggio errore -->
+        <div v-if="loadError" class="implementation-note">
+          <h3>⚠️ Errore Caricamento Dati</h3>
+          <p>{{ loadError }}</p>
+          <button class="btn-primary" @click="loadDashboardData">🔄 Riprova</button>
         </div>
       </div>
     </main>
@@ -246,33 +161,59 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 import AppHeader from '@/components/common/AppHeader.vue'
+import api from '@/services/api'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const toastStore = useToastStore()
+
+const loading = ref(false)
+const loadError = ref('')
 
 const stats = ref({
   totalUsers: 0,
   totalItineraries: 0,
   totalActivities: 0,
-  totalFavorites: 0
+  totalFavorites: 0,
+  etMediaUtenti: 0,
+  topAttivita: [],
+  topItinerari: []
 })
+
+const detailedInfo = ref([])
 
 onMounted(() => {
   if (!authStore.isAdmin) {
     return
   }
-
-  // Simula caricamento dati
-  setTimeout(() => {
-    stats.value = {
-      totalUsers: 1247,
-      totalItineraries: 45,
-      totalActivities: 127,
-      totalFavorites: 3856
-    }
-  }, 500)
+  loadDashboardData()
 })
+
+async function loadDashboardData() {
+  loading.value = true
+  loadError.value = ''
+
+  try {
+    // Carica statistiche globali e info dettagliate in parallelo
+    const [statsResponse, infoResponse] = await Promise.all([
+      api.dashboard.getStats(),
+      api.dashboard.getAll()
+    ])
+
+    stats.value = statsResponse.data
+    detailedInfo.value = infoResponse.data
+
+    toastStore.success('Dashboard caricata con successo')
+  } catch (error) {
+    console.error('Errore caricamento dashboard:', error)
+    loadError.value = error.response?.data?.error || 'Errore nel caricamento dei dati della dashboard'
+    toastStore.error(loadError.value)
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <style scoped>
@@ -407,43 +348,6 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
-.chart-placeholder {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
-  height: 200px;
-  padding: 20px 0;
-  border-bottom: 2px solid #e0e0e0;
-}
-
-.chart-bar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  width: 80px;
-  background: linear-gradient(to top, #f7941d, #ffc107);
-  border-radius: 8px 8px 0 0;
-  padding: 10px;
-  color: white;
-  font-weight: bold;
-  position: relative;
-}
-
-.chart-bar span {
-  position: absolute;
-  bottom: -30px;
-  font-size: 12px;
-  color: #666;
-}
-
-.bar-value {
-  position: absolute !important;
-  top: -25px !important;
-  bottom: auto !important;
-  color: #333 !important;
-}
-
 .chart-note {
   margin-top: 15px;
   color: #999;
@@ -451,41 +355,50 @@ onMounted(() => {
   font-style: italic;
 }
 
-.age-distribution {
+.eta-media-display {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  padding: 30px 0;
 }
 
-.age-group {
-  display: grid;
-  grid-template-columns: 80px 1fr 60px;
-  align-items: center;
-  gap: 15px;
-}
-
-.age-label {
-  font-weight: 600;
-  color: #333;
-}
-
-.progress-bar {
-  height: 24px;
-  background: #e0e0e0;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #f7941d, #ffc107);
-  transition: width 0.3s ease;
-}
-
-.age-value {
+.eta-media-number {
+  font-size: 64px;
   font-weight: bold;
   color: #f7941d;
-  text-align: right;
+  line-height: 1;
+}
+
+.eta-media-label {
+  font-size: 24px;
+  color: #666;
+}
+
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-item {
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #f7941d;
+}
+
+.info-item-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.info-item-stats {
+  display: flex;
+  gap: 15px;
+  font-size: 13px;
+  color: #666;
 }
 
 .data-table {
@@ -508,55 +421,6 @@ onMounted(() => {
 
 .data-table tr:hover {
   background: #f9f9f9;
-}
-
-.transport-card {
-  background: white;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.transport-icon {
-  font-size: 48px;
-  margin-bottom: 15px;
-}
-
-.transport-card h3 {
-  color: #0066cc;
-  margin-bottom: 20px;
-}
-
-.transport-stats {
-  text-align: left;
-}
-
-.capacity-bar {
-  height: 20px;
-  background: #e0e0e0;
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 10px 0;
-}
-
-.capacity-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #4caf50, #8bc34a);
-  transition: width 0.3s ease;
-}
-
-.capacity-status {
-  font-weight: 600;
-  margin-top: 10px;
-}
-
-.capacity-status.ok {
-  color: #4caf50;
-}
-
-.capacity-status.warning {
-  color: #ff9800;
 }
 
 .implementation-note {

@@ -102,8 +102,13 @@
         <div v-else class="confirmation-section">
           <div class="confirmation-icon">✉️</div>
           <h2>Conferma la tua email</h2>
-          <p>Abbiamo inviato un codice a 4 cifre a:</p>
-          <p class="email-highlight">{{ authStore.pendingEmail }}</p>
+
+          <!-- Banner con codice di conferma -->
+          <div v-if="authStore.pendingCodice" class="code-banner">
+            Inserisci il codice <strong>{{ authStore.pendingCodice }}</strong> per continuare
+          </div>
+
+          <p>Email: <span class="email-highlight">{{ authStore.pendingEmail }}</span></p>
 
           <form @submit.prevent="handleConfirm">
             <div class="form-group">
@@ -228,6 +233,7 @@ async function handleConfirm() {
 function cancelConfirmation() {
   authStore.awaitingConfirmation = false
   authStore.pendingEmail = null
+  authStore.pendingCodice = null
   confirmationCode.value = ''
 }
 </script>
@@ -397,6 +403,23 @@ function cancelConfirmation() {
 
 .btn-secondary-link:hover {
   color: #333;
+}
+
+.code-banner {
+  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  border: 2px solid #4caf50;
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  font-size: 17px;
+  color: #2e7d32;
+  text-align: center;
+}
+
+.code-banner strong {
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: #1b5e20;
 }
 
 @media (max-width: 768px) {

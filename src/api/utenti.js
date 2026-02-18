@@ -1,6 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import User from '../models/user.js';
+import User from '../models/User.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { sendConfirmationCode } from '../utils/emailUtils.js'; // invio codice email
 import { hashPassword, comparePassword } from '../utils/passwordUtils.js'; // cifratura password
@@ -49,9 +49,6 @@ router.post('/', async (req, res) => {
     // genera codice a 4 cifre
     const codiceConferma = Math.floor(1000 + Math.random() * 9000);
 
-    // invio codice via email
-    await sendConfirmationCode(email, codiceConferma);
-
     // cifra la password prima di salvare
     const hashedPassword = await hashPassword(password);
 
@@ -69,8 +66,23 @@ router.post('/', async (req, res) => {
 
     await newUser.save();
 
+    // invio codice via email (non blocca la registrazione se fallisce)
+    let emailInviata = true;
+    try {
+      await sendConfirmationCode(email, codiceConferma);
+    } catch (emailError) {
+      console.error('Errore invio email di conferma:', emailError.message);
+      emailInviata = false;
+    }
+
+    const message = emailInviata
+      ? 'Registrazione avviata. Inserisci il codice a 4 cifre inviato via email per completare.'
+      : 'Registrazione avviata. Non è stato possibile inviare l\'email di conferma. Controlla la configurazione SMTP.';
+
     res.status(201).json({
-      message: 'Registrazione avviata. Inserisci il codice a 4 cifre inviato via email per completare.',
+      message,
+      emailInviata,
+      codiceConferma,
       user: {
         self: `/api/v1/utenti/${newUser._id}`,
         email: newUser.email,
@@ -79,8 +91,8 @@ router.post('/', async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Errore nella registrazione' });
+    console.error('Errore nella registrazione:', error.message);
+    res.status(500).json({ error: `Errore nella registrazione: ${error.message}` });
   }
 });
 

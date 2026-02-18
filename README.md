@@ -11,35 +11,30 @@ Il progetto è composto da:
 # Struttura del progetto
 
 Tap-on-Places:
+Tap-on-Places/
 ├── README.md
 ├── package.json
 ├── .env.example
 ├── .gitignore
 │
 ├── src/
-├── ├── api/
-├── ├── config/
-├── ├── models/
-├── ├── middleware/
-├── ├── utils/
-├── ├── index.js
+│ ├── api/
+│ ├── config/
+│ ├── models/
+│ ├── middleware/
+│ ├── utils/
+│ └── index.js
 │
 ├── frontend/
 │
-├── doc/
-├── ├── oas3.yaml
-
-
-
----
+└── doc/
+│ └──oas3.yaml
 
 # Requisiti
 
 - Node.js 
 - npm
 - MongoDB locale oppure MongoDB Atlas
-
----
 
 # Variabili d’ambiente
 

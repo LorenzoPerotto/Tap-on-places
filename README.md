@@ -52,6 +52,7 @@ Successivamente, compilare il file .env con le proprie credenziali.
 1) Installare dipendenze Backend
 
 Dalla root del progetto: 
+
 -npm install
 
 ----
@@ -71,6 +72,7 @@ Swagger disponibile su http://localhost:8080/api-docs
 3) Installare dipendenze Frontend
 
 Aprire un nuovo terminale:
+
 -cd frontend
 -npm install
 

@@ -1,4 +1,5 @@
 import express from 'express';
+import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
 import { authMiddleware } from '../middleware/auth.js';
 import { sendConfirmationCode } from '../utils/emailUtils.js'; // invio codice email
@@ -34,8 +35,8 @@ router.post('/', async (req, res) => {
     }
 
     if (!isSecurePassword(password)) {
-      return res.status(400).json({ 
-        error: 'Password non sicura: minimo 8 caratteri, almeno 1 maiuscola, 1 minuscola, 1 numero, 1 simbolo' 
+      return res.status(400).json({
+        error: 'Password non sicura: minimo 8 caratteri, almeno 1 maiuscola, 1 minuscola, 1 numero, 1 simbolo'
       });
     }
 
@@ -137,19 +138,48 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Email o password non corretti' });
     }
 
+    // Genera token JWT
+    const token = jwt.sign(
+      { id: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
     // login avvenuto con successo
     res.status(200).json({
       message: 'Login avvenuto con successo',
+      token,
       user: {
         self: `/api/v1/utenti/${user._id}`,
         nome: user.nome,
         cognome: user.cognome,
-        email: user.email
+        nickname: user.nickname,
+        email: user.email,
+        isComunale: user.tipo === 'comunale'
       }
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Errore interno del server' });
+  }
+});
+
+// Profilo utente autenticato
+router.get('/me', authMiddleware, async (req, res) => {
+  try {
+    const user = req.user;
+    res.status(200).json({
+      _id: user._id,
+      nome: user.nome,
+      cognome: user.cognome,
+      nickname: user.nickname,
+      email: user.email,
+      isComunale: user.tipo === 'comunale',
+      dataNascita: user.dataNascita
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Errore nel recupero del profilo' });
   }
 });
 

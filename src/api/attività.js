@@ -5,24 +5,19 @@ import { authMiddleware } from '../middleware/auth.js';
 const router = express.Router();
 
 //ricerca attività per nome
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const { nome } = req.query;
 
-    if (!nome) {
-      return res.status(400).json({ error: 'Il campo "nome" è obbligatorio' });
-    }
+    // Se nome è fornito, filtra per nome; altrimenti restituisce tutte le attività
+    const filter = nome ? { nome: { $regex: nome, $options: 'i' } } : {};
 
-    const activities = await Activity.find({
-      nome: { $regex: nome, $options: 'i' }
-    }).select('nome');
-
-    if (activities.length === 0) {
-      return res.status(404).json({ message: 'Nessuna attività trovata con questo nome' });
-    }
+    const activities = await Activity.find(filter).select('nome tipo tipologia');
 
     const result = activities.map(act => ({
       nome: act.nome,
+      tipo: act.tipo,
+      tipologia: act.tipologia,
       self: `/api/v1/attivita/${act._id}`
     }));
 
@@ -34,7 +29,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 //dettagli attività
-router.get('/:id', authMiddleware, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const activityId = req.params.id;
 
@@ -65,7 +60,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
 //salva attività
 router.post('/salva/:id', authMiddleware, async (req, res) => {
   try {
-    const user = req.user; 
+    const user = req.user;
     const activityId = req.params.id;
 
     const activity = await Activity.findById(activityId);

@@ -6,6 +6,10 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || null)
   const user = ref(JSON.parse(localStorage.getItem('user') || 'null'))
 
+  // Stato per la registrazione con conferma
+  const awaitingConfirmation = ref(false)
+  const pendingEmail = ref(null)
+
   const isAuthenticated = computed(() => !!token.value)
   const isAdmin = computed(() => user.value?.isComunale === true)
   const userFullName = computed(() => user.value ? `${user.value.nome} ${user.value.cognome}` : '')
@@ -22,8 +26,52 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     token.value = null
     user.value = null
+    awaitingConfirmation.value = false
+    pendingEmail.value = null
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+  }
+
+  async function login(credentials) {
+    try {
+      const response = await api.auth.login(credentials)
+      const { token: newToken, user: newUser } = response.data
+      setAuth(newToken, newUser)
+      return { success: true, message: response.data.message }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.error || 'Errore durante il login'
+      }
+    }
+  }
+
+  async function register(data) {
+    try {
+      const response = await api.auth.register(data)
+      awaitingConfirmation.value = true
+      pendingEmail.value = data.email
+      return { success: true, message: response.data.message }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.error || 'Errore durante la registrazione'
+      }
+    }
+  }
+
+  async function confirmRegistration(email, codice) {
+    try {
+      const response = await api.auth.confirm({ email, codice: Number(codice) })
+      awaitingConfirmation.value = false
+      pendingEmail.value = null
+      return { success: true, message: response.data.message }
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.error || 'Codice non valido'
+      }
+    }
   }
 
   async function checkAuth() {
@@ -43,6 +91,8 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     token,
     user,
+    awaitingConfirmation,
+    pendingEmail,
     isAuthenticated,
     isAdmin,
     userFullName,
@@ -50,6 +100,9 @@ export const useAuthStore = defineStore('auth', () => {
     userNickname,
     setAuth,
     logout,
+    login,
+    register,
+    confirmRegistration,
     checkAuth
   }
 })

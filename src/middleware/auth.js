@@ -23,7 +23,7 @@ export const authMiddleware = async (req, res, next) => {
     }
 
     // passiamo l'utente loggato ai controller
-    req.loggedUser = user;
+    req.user = user;
     next();
   } catch (err) {
     console.error('Errore authMiddleware:', err);

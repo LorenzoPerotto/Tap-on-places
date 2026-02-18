@@ -1,12 +1,14 @@
 <template>
   <header class="app-header">
-    <div class="header-content">
-      <button class="back-button" @click="goBack">
-        ← Indietro
+    <nav class="header-nav">
+      <button class="home-button" @click="goHome" title="Torna alla Home">
+        ← Home
       </button>
+    </nav>
+    <div class="header-title">
       <h1>{{ title }}</h1>
-      <div class="header-spacer"></div>
     </div>
+    <div class="header-spacer"></div>
   </header>
 </template>
 
@@ -22,61 +24,68 @@ defineProps({
 
 const router = useRouter()
 
-function goBack() {
-  router.back()
+function goHome() {
+  router.push('/')
 }
 </script>
 
 <style scoped>
 .app-header {
   background: rgba(0, 102, 204, 0.95);
-  padding: 20px;
+  padding: 15px 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 100;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
 }
 
-.back-button {
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.2);
+.header-nav {
+  flex-shrink: 0;
+}
+
+.home-button {
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.15);
   color: white;
-  border: none;
-  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 600;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
-.back-button:hover {
+.home-button:hover {
   background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateX(-2px);
 }
 
-.app-header h1 {
+.header-title {
+  flex: 1;
+  text-align: center;
+}
+
+.header-title h1 {
   color: white;
   font-size: 24px;
-  text-align: center;
-  flex: 1;
+  margin: 0;
 }
 
 .header-spacer {
   width: 100px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {
-  .app-header h1 {
+  .header-title h1 {
     font-size: 18px;
   }
 
-  .back-button {
+  .home-button {
     font-size: 12px;
     padding: 6px 12px;
   }
@@ -86,3 +95,4 @@ function goBack() {
   }
 }
 </style>
+

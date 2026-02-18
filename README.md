@@ -43,7 +43,8 @@ Il progetto utilizza variabili d’ambiente per:
 -Separare configurazioni di sviluppo e produzione
 Il file .env non è presente su GitHub per motivi di sicurezza.
 
-È disponibile il file .env.example, che può essere copiato con: cp .env.example .env
+È disponibile il file .env.example, che può essere copiato con: cp .env.example .env (linux)
+                                                                copy .env.example .env (windows)
 Successivamente, compilare il file .env con le proprie credenziali.
 
 # Avvio del progetto in locale

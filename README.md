@@ -53,13 +53,13 @@ Successivamente, compilare il file .env con le proprie credenziali.
 
 Dalla root del progetto: 
 
--npm install
+npm install
 
 ----
 
 2) Avviare il Backend
 
--npm start
+npm start
 
 ----
 
@@ -73,14 +73,15 @@ Swagger disponibile su http://localhost:8080/api-docs
 
 Aprire un nuovo terminale:
 
--cd frontend
--npm install
+cd frontend
+
+npm install
 
 ----
 
 4) Avviare il Frontend
 
--npm run dev
+npm run dev
 
 ----
 

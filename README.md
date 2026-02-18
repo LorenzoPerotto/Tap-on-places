@@ -54,9 +54,13 @@ Successivamente, compilare il file .env con le proprie credenziali.
 Dalla root del progetto: 
 -npm install
 
+----
+
 2) Avviare il Backend
 
 -npm start
+
+----
 
 Se tutto è corretto, verrà mostrato:
 
@@ -70,9 +74,13 @@ Aprire un nuovo terminale:
 -cd frontend
 -npm install
 
+----
+
 4) Avviare il Frontend
 
 -npm run dev
+
+----
 
 Aprire l'URL mostrato nel terminale.
 

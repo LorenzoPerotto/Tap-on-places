@@ -124,13 +124,15 @@ Possibili configurazioni:
 
 # Deployment
 
-//Per il deployment è necessario:
+Il deployment è stato fatto in questo modo:
 
-//1. Caricare frontend e backend su un servizio cloud (es. Render)
-//2. Configurare le variabili d’ambiente nel pannello del servizio
-//3. Usato MongoDB Atlas per il database remoto
+1) Abbiamo caricato il frontend e il backend sul servizio cloud Render.
+  
+2) Configurato le variabili d’ambiente nel pannello di servizio
+  
+3) Usato MongoDB Atlas per il database remoto
 
-//Le variabili non devono mai essere hardcoded nel codice.
+Le variabili non sono state inserite direttamente nel codice, ma gestite tramite configurazioni esterne.
 
 # Tecnologie utilizzate
 

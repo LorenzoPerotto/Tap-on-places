@@ -22,6 +22,7 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // Test variabile
 console.log('MONGODB_URI:', process.env.MONGODB_URI);
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -32,27 +33,48 @@ app.use(cors({
 }));
 
 app.use(express.json());
-// --- Connessione a MongoDB ---
+
+// ----- Connessione a MongoDB -----
 const mongoURI = process.env.MONGODB_URI;
+
 if (!mongoURI) {
- console.error('Errore: MONGODB_URI non definito');
+  console.error('Errore: MONGODB_URI non definito nel file .env');
   process.exit(1);
 }
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connesso a MongoDB'))
-  .catch(err => {
-    console.error('Errore connessione MongoDB:', err);
+
+mongoose
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
+  .then(() => {
+    console.log('Connesso a MongoDB');
+  })
+  .catch((error) => {
+    console.error('Errore connessione MongoDB:', error);
     process.exit(1);
   });
-// --- Swagger ---
+
+// ----- Swagger OpenAPI -----
 swaggerSetup(app);
-// --- Routing API ---
+
+// ----- Routing API v1 -----
 app.use('/api/v1/utenti', utentiRouter);
 app.use('/api/v1/itinerari', itinerariRouter);
 app.use('/api/v1/attivita', attivitaRouter);
 app.use('/api/v1/informazioni', informazioniRouter);
+
+// ----- Gestione errori 404 -----
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Endpoint non trovato'
+  });
+});
+
 // ----- Avvio server -----
 app.listen(PORT, () => {
   console.log(`Server avviato su http://localhost:${PORT}`);
   console.log(`Swagger disponibile su http://localhost:${PORT}/api-docs`);
+});
+
 

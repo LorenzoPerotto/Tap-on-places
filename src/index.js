@@ -10,7 +10,7 @@ import { swaggerSetup } from './config/swagger.js';
 // Router API
 import utentiRouter from './api/utenti.js';
 import itinerariRouter from './api/itinerario.js';
-import attivitaRouter from './api/attività.js';
+import attivitaRouter from './api/attivita.js';
 import informazioniRouter from './api/informazioni.js';
 
 // ----- Risoluzione path per .env nella root -----
@@ -27,10 +27,20 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // ----- Middleware globali -----
-const frontendURL = process.env.FRONTEND_URL || 'http://localhost:5173';
+// CORS: supporta più origini separate da virgola in FRONTEND_URL
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
+  .split(',')
+  .map(url => url.trim());
 
 app.use(cors({
-  origin: frontendURL,
+  origin: function (origin, callback) {
+    // Permetti richieste senza origin (es. Postman, curl, server-side)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Non consentito da CORS'));
+  },
   credentials: true
 }));
 
@@ -45,10 +55,7 @@ if (!mongoURI) {
 }
 
 mongoose
-  .connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  })
+  .connect(mongoURI)
   .then(() => {
     console.log('Connesso a MongoDB');
   })

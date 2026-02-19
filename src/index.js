@@ -28,7 +28,7 @@ const PORT = process.env.PORT || 8080;
 
 // ----- Middleware globali -----
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://tap-on-places-frontend.onrender.com',
   credentials: true
 }));
 

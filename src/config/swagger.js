@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 // Caricamento del file OpenAPI 3
 const swaggerDocument = YAML.load(
-  path.join(__dirname, '../../doc/oas3.yaml')
+  path.join(__dirname, '../../docs/oas3.yaml')
 );
 
 
@@ -27,5 +27,6 @@ export const swaggerSetup = (app) => {
     swaggerUi.setup(swaggerDocument, swaggerOptions)
   );
 };
+
 
 

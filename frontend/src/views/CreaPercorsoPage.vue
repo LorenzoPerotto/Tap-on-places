@@ -55,6 +55,40 @@
           <div class="waypoints-section">
             <h3>📍 Tappe del Percorso</h3>
 
+            <!-- Casella di ricerca tappe -->
+            <div class="search-tappe-wrapper">
+              <div class="search-input-container">
+                <span class="search-icon">🔍</span>
+                <input
+                  type="text"
+                  v-model="searchQuery"
+                  placeholder="Cerca una tappa da aggiungere..."
+                  class="search-tappe-input"
+                  @focus="showSearchResults = true"
+                />
+                <button
+                  v-if="searchQuery"
+                  type="button"
+                  class="search-clear-btn"
+                  @click="searchQuery = ''; showSearchResults = false"
+                >×</button>
+              </div>
+              <div v-if="showSearchResults && filteredSearchResults.length > 0" class="search-results-dropdown">
+                <div
+                  v-for="poi in filteredSearchResults"
+                  :key="poi._id"
+                  class="search-result-item"
+                  @click="addActivityFromSearch(poi)"
+                >
+                  <span class="result-name">{{ poi.nome }}</span>
+                  <span class="result-type">{{ poi.tipo }}</span>
+                </div>
+              </div>
+              <div v-if="showSearchResults && searchQuery && filteredSearchResults.length === 0" class="search-no-results">
+                Nessun risultato per "{{ searchQuery }}"
+              </div>
+            </div>
+
             <div v-if="selectedActivities.length === 0" class="empty-waypoints">
               <p>Nessuna tappa selezionata</p>
               <p class="hint">Clicca sui marker della mappa o cerca attività per aggiungerle</p>
@@ -142,6 +176,8 @@ const toastStore = useToastStore()
 
 const saving = ref(false)
 const allPois = ref([])
+const searchQuery = ref('')
+const showSearchResults = ref(false)
 const selectedActivities = ref([])
 
 const formData = ref({
@@ -156,6 +192,15 @@ const suggestedPois = computed(() => {
   return allPois.value.filter(poi => 
     !selectedActivities.value.find(a => a._id === poi._id)
   ).slice(0, 5)
+})
+
+const filteredSearchResults = computed(() => {
+  if (!searchQuery.value.trim()) return []
+  const query = searchQuery.value.toLowerCase()
+  return allPois.value.filter(poi =>
+    poi.nome.toLowerCase().includes(query) &&
+    !selectedActivities.value.find(a => a._id === poi._id)
+  ).slice(0, 8)
 })
 
 const totalTime = computed(() => {
@@ -207,6 +252,12 @@ function addActivity(activity) {
   selectedActivities.value.push(activity)
   localStorage.setItem('tempItinerary', JSON.stringify(selectedActivities.value))
   toastStore.success(`${activity.nome} aggiunta al percorso`)
+}
+
+function addActivityFromSearch(activity) {
+  addActivity(activity)
+  searchQuery.value = ''
+  showSearchResults.value = false
 }
 
 function removeActivity(index) {
@@ -344,6 +395,126 @@ function clearAll() {
   color: #0066cc;
   font-size: 18px;
   margin-bottom: 15px;
+}
+
+/* Search tappe */
+.search-tappe-wrapper {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.search-input-container {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 0 12px;
+  transition: border-color 0.3s ease;
+}
+
+.search-input-container:focus-within {
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.15);
+}
+
+.search-icon {
+  font-size: 16px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.search-tappe-input {
+  flex: 1;
+  border: none !important;
+  outline: none;
+  padding: 12px 0;
+  font-size: 14px;
+  background: transparent;
+  box-shadow: none !important;
+}
+
+.search-clear-btn {
+  background: #ccc;
+  border: none;
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.search-clear-btn:hover {
+  background: #999;
+}
+
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background: #e3f2fd;
+}
+
+.result-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.result-type {
+  font-size: 12px;
+  color: #888;
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.search-no-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 0 0 8px 8px;
+  padding: 14px;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
 }
 
 .empty-waypoints {

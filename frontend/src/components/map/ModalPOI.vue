@@ -15,12 +15,6 @@
           />
         </div>
 
-        <img 
-          v-if="poi.image" 
-          :src="poi.image" 
-          :alt="poi.nome"
-          class="modal-poi-image"
-        >
 
         <div class="poi-details">
           <p><strong>Tipo:</strong> {{ poi.tipo }}</p>
@@ -125,13 +119,6 @@ function addToItinerary() {
   margin: 0;
 }
 
-.modal-poi-image {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
 
 .poi-details {
   background: #f8f9fa;

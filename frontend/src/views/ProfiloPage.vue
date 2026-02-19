@@ -23,9 +23,7 @@
             :key="activity._id"
             class="activity-card"
           >
-            <div class="activity-map-preview">
-              <img v-if="activity.image" :src="activity.image" :alt="activity.nome">
-            </div>
+
 
             <FavoriteIcon
               :item-id="activity._id"
@@ -61,9 +59,7 @@
             :key="itinerary._id"
             class="activity-card"
           >
-            <div class="activity-map-preview">
-              <img v-if="itinerary.coverImage" :src="itinerary.coverImage" :alt="itinerary.nome">
-            </div>
+
 
             <FavoriteIcon
               :item-id="itinerary._id"
@@ -98,6 +94,52 @@
         </button>
       </div>
     </main>
+
+    <!-- Modal dettagli attività -->
+    <Transition name="modal">
+      <div v-if="selectedActivity" class="modal-overlay" @click.self="selectedActivity = null">
+        <div class="modal-content">
+          <button class="modal-close" @click="selectedActivity = null">&times;</button>
+          <h2>📍 {{ selectedActivity.nome }}</h2>
+          <div class="modal-details">
+            <p><strong>📍 Tipo:</strong> {{ selectedActivity.tipo }}</p>
+            <p v-if="selectedActivity.tipologia"><strong>🎯 Tipologia:</strong> {{ selectedActivity.tipologia }}</p>
+            <p v-if="selectedActivity.descrizione"><strong>📝 Descrizione:</strong> {{ selectedActivity.descrizione }}</p>
+            <p v-if="selectedActivity.tempo"><strong>⏱️ Tempo visita:</strong> {{ selectedActivity.tempo }} minuti</p>
+            <p v-if="selectedActivity.budget"><strong>💰 Budget:</strong> €{{ selectedActivity.budget }}</p>
+            <p v-if="selectedActivity.coordinate"><strong>🌍 Coordinate:</strong> {{ selectedActivity.coordinate.lat.toFixed(4) }}, {{ selectedActivity.coordinate.lng.toFixed(4) }}</p>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+    <!-- Modal dettagli itinerario -->
+    <Transition name="modal">
+      <div v-if="selectedItinerary" class="modal-overlay" @click.self="selectedItinerary = null">
+        <div class="modal-content">
+          <button class="modal-close" @click="selectedItinerary = null">&times;</button>
+          <h2>🗺️ {{ selectedItinerary.nome }}</h2>
+          <div class="modal-details">
+            <p v-if="selectedItinerary.descrizione"><strong>📝 Descrizione:</strong> {{ selectedItinerary.descrizione }}</p>
+            <p v-if="selectedItinerary.tipologia"><strong>🎯 Tipologia:</strong> {{ selectedItinerary.tipologia }}</p>
+            <p v-if="selectedItinerary.tempo"><strong>⏱️ Durata:</strong> {{ selectedItinerary.tempo }} minuti</p>
+            <p v-if="selectedItinerary.budget"><strong>💰 Budget:</strong> €{{ selectedItinerary.budget }}</p>
+          </div>
+          <div v-if="selectedItinerary.activitiesDetails && selectedItinerary.activitiesDetails.length > 0" class="modal-activities">
+            <h3>📍 Tappe dell'itinerario</h3>
+            <div v-for="(act, index) in selectedItinerary.activitiesDetails" :key="act._id" class="modal-activity-item">
+              <span class="activity-number">{{ index + 1 }}</span>
+              <div class="activity-detail-info">
+                <strong>{{ act.nome }}</strong>
+                <small v-if="act.tipo">🏷️ {{ act.tipo }}</small>
+                <small v-if="act.tempo">⏱️ {{ act.tempo }} min</small>
+                <small v-if="act.budget">💰 €{{ act.budget }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -110,24 +152,42 @@ import AppHeader from '@/components/common/AppHeader.vue'
 import FavoriteIcon from '@/components/common/FavoriteIcon.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 
+import api from '@/services/api'
+
 const router = useRouter()
 const authStore = useAuthStore()
 const favoritesStore = useFavoritesStore()
 
 const loading = ref(false)
+const selectedActivity = ref(null)
+const selectedItinerary = ref(null)
 
 onMounted(() => {
   favoritesStore.loadFromStorage()
 })
 
 function viewDetails(activity) {
-  // Implementa visualizzazione dettagli
-  console.log('View activity:', activity)
+  selectedActivity.value = activity
 }
 
-function viewItinerary(itinerary) {
-  // Implementa visualizzazione itinerario
-  console.log('View itinerary:', itinerary)
+async function viewItinerary(itinerary) {
+  try {
+    const response = await api.itineraries.getById(itinerary._id)
+    const details = response.data
+
+    let activitiesDetails = []
+    if (details.activities && details.activities.length > 0) {
+      const actPromises = details.activities.map(actId =>
+        api.activities.getById(actId).then(r => r.data).catch(() => null)
+      )
+      activitiesDetails = (await Promise.all(actPromises)).filter(Boolean)
+    }
+
+    selectedItinerary.value = { ...itinerary, ...details, activitiesDetails }
+  } catch (error) {
+    console.error('Error loading itinerary details:', error)
+    selectedItinerary.value = { ...itinerary, activitiesDetails: [] }
+  }
 }
 </script>
 
@@ -218,19 +278,7 @@ function viewItinerary(itinerary) {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.activity-map-preview {
-  width: 100%;
-  height: 200px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  margin-bottom: 15px;
-  overflow: hidden;
-}
 
-.activity-map-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
 .activity-card h3 {
   padding: 0 20px;
@@ -323,5 +371,121 @@ function viewItinerary(itinerary) {
   .activities-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #999;
+  font-weight: bold;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-content h2 {
+  color: #0066cc;
+  margin-bottom: 20px;
+  padding-right: 30px;
+}
+
+.modal-details {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.modal-details p {
+  margin-bottom: 8px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.modal-activities h3 {
+  color: #0066cc;
+  margin-bottom: 15px;
+}
+
+.modal-activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.activity-number {
+  width: 28px;
+  height: 28px;
+  background: #f7941d;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.activity-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.activity-detail-info strong {
+  color: #333;
+  font-size: 14px;
+}
+
+.activity-detail-info small {
+  color: #888;
+  font-size: 12px;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
 }
 </style>

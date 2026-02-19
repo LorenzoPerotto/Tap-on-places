@@ -37,12 +37,7 @@
             />
           </div>
 
-          <img 
-            v-if="activity.image"
-            :src="activity.image"
-            :alt="activity.nome"
-            class="activity-main-image"
-          >
+
 
           <div class="activity-info-detail">
             <p><strong>📍 Tipo:</strong> {{ activity.tipo }}</p>
@@ -115,18 +110,7 @@ const searched = ref(false)
 const results = ref([])
 const savingId = ref(null)
 
-// Immagini per le attività
-const activityImages = {
-  'MUSE': 'https://images.unsplash.com/photo-1565911783875-5238b2a76a13?w=800',
-  'Castello del Buonconsiglio': 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800',
-  'Piazza Duomo': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800',
-  'Duomo': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800',
-  'Teatro': 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=800',
-  'Università': 'https://images.unsplash.com/photo-1562774053-701939374585?w=800',
-  'Museo': 'https://images.unsplash.com/photo-1565911783875-5238b2a76a13?w=800',
-  'Parco': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-  'Doss Trento': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800'
-}
+
 
 async function searchActivities() {
   if (!searchQuery.value.trim()) {
@@ -147,15 +131,13 @@ async function searchActivities() {
           const detailResponse = await api.activities.getById(activity._id || extractIdFromSelf(activity.self))
           return {
             ...detailResponse.data,
-            _id: activity._id || extractIdFromSelf(activity.self),
-            image: getActivityImage(activity.nome)
+            _id: activity._id || extractIdFromSelf(activity.self)
           }
         } catch (error) {
           console.error('Error fetching activity details:', error)
           return {
             ...activity,
-            _id: activity._id || extractIdFromSelf(activity.self),
-            image: getActivityImage(activity.nome)
+            _id: activity._id || extractIdFromSelf(activity.self)
           }
         }
       })
@@ -177,15 +159,7 @@ function extractIdFromSelf(selfUrl) {
   return selfUrl.split('/').pop()
 }
 
-function getActivityImage(nome) {
-  // Cerca corrispondenza parziale nel nome
-  for (const [key, image] of Object.entries(activityImages)) {
-    if (nome.toLowerCase().includes(key.toLowerCase())) {
-      return image
-    }
-  }
-  return 'https://images.unsplash.com/photo-1565911783875-5238b2a76a13?w=800'
-}
+
 
 async function saveActivity(activity) {
   if (!authStore.isAuthenticated) {
@@ -332,14 +306,7 @@ function clearSearch() {
   margin: 0;
 }
 
-.activity-main-image {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
+
 
 .activity-info-detail {
   line-height: 1.8;

@@ -4,7 +4,7 @@
     <div class="map-section">
       <div class="header-left">
         <div class="logo" @click="router.push('/')">
-          <img src="/unnamed.jpeg" alt="Logo Comune di Trento">
+          📍
         </div>
         <h1 class="site-title">Tap On Places - Scopri Trento</h1>
       </div>
@@ -173,9 +173,8 @@ function handleLogout() {
   gap: 20px;
 }
 
-.logo img {
-  height: 80px;
-  width: auto;
+.logo {
+  font-size: 40px;
   cursor: pointer;
 }
 
@@ -309,8 +308,8 @@ function handleLogout() {
 }
 
 @media (max-width: 768px) {
-  .logo img {
-    height: 60px;
+  .logo {
+    font-size: 30px;
   }
 
   .site-title {

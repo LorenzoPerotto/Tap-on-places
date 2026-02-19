@@ -28,7 +28,12 @@ router.get('/', async (req, res) => {
     const itinerari = await Itinerary.find(filter).exec();
 
     const lista = itinerari.map(it => ({
+      _id: it._id,
       nome: it.nome,
+      tipologia: it.tipologia,
+      tempo: it.tempo,
+      budget: it.budget,
+      descrizione: it.descrizione,
       self: `/api/v1/itinerari/${it._id}`
     }));
 
@@ -74,11 +79,13 @@ router.get('/:id', async (req, res) => {
     }
 
     const dettagli = {
+      _id: it._id,
       nome: it.nome,
       tipologia: it.tipologia,
       tempo: it.tempo,
       budget: it.budget,
       descrizione: it.descrizione,
+      activities: it.activities,
     };
 
     res.status(200).json(dettagli);

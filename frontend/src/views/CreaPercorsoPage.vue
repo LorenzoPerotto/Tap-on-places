@@ -165,6 +165,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
+import { useFavoritesStore } from '@/stores/favorites'
 import AppHeader from '@/components/common/AppHeader.vue'
 import LeafletMap from '@/components/map/LeafletMap.vue'
 import api from '@/services/api'
@@ -173,6 +174,7 @@ import draggable from 'vuedraggable'
 const router = useRouter()
 const authStore = useAuthStore()
 const toastStore = useToastStore()
+const favoritesStore = useFavoritesStore()
 
 const saving = ref(false)
 const allPois = ref([])
@@ -298,7 +300,13 @@ async function createItinerary() {
 
     const response = await api.itineraries.create(payload)
 
-    toastStore.success('Percorso creato con successo!')
+    // Auto-salva nei preferiti locali
+    const createdItinerary = response.data.itinerary
+    if (createdItinerary) {
+      favoritesStore.addItinerary(createdItinerary)
+    }
+
+    toastStore.success('Percorso creato e salvato nei preferiti! ⭐')
 
     // Pulisci dati temporanei
     localStorage.removeItem('tempItinerary')

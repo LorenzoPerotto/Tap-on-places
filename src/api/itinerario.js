@@ -186,9 +186,16 @@ router.post('/', authMiddleware, async (req, res) => {
 
     await newItinerary.save();
 
+    // Auto-salva l'itinerario nei preferiti dell'utente creatore
+    if (!req.user.savedItineraries.includes(newItinerary._id)) {
+      req.user.savedItineraries.push(newItinerary._id);
+      await req.user.save();
+    }
+
     res.status(201).json({
       message: 'Itinerario creato con successo',
       itinerary: {
+        _id: newItinerary._id,
         self: `/api/v1/itinerari/${newItinerary._id}`,
         nome: newItinerary.nome,
         tipologia: newItinerary.tipologia,

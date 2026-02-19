@@ -64,6 +64,10 @@ function updateMarkers() {
   markers.length = 0
 
   props.pois.forEach(poi => {
+    if (!poi.coordinate || poi.coordinate.lat == null || poi.coordinate.lng == null) {
+      console.warn('POI senza coordinate valide:', poi.nome)
+      return
+    }
     const marker = L.marker([poi.coordinate.lat, poi.coordinate.lng])
       .addTo(map)
 

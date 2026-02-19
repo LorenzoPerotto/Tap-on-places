@@ -27,10 +27,10 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // ----- Middleware globali -----
-const frontendURL = process.env.https://tap-on-places-frontend.onrender.com || 'http://localhost:5173';
+const frontendURL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 app.use(cors({
-  origin: https://tap-on-places-frontend.onrender.com,
+  origin: FRONTEND_URL,
   credentials: true
 }));
 

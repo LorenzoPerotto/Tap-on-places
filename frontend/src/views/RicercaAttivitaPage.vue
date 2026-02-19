@@ -399,10 +399,6 @@ function clearSearch() {
     flex-direction: column;
   }
 
-  .activity-main-image {
-    height: 200px;
-  }
-
   .activity-actions {
     flex-direction: column;
   }

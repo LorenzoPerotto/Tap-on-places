@@ -1,27 +1,27 @@
 /* TAP ON PLACES - Main CSS */
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 :root {
-  --primary-color: #f7941d;
-  --secondary-color: #0066cc;
-  --dark-overlay: rgba(0, 0, 0, 0.5);
-  --light-bg: rgba(255, 255, 255, 0.95);
-  --text-dark: #333;
-  --text-light: #fff;
-  --border-radius: 8px;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --primary-color: #f7941d;
+    --secondary-color: #0066cc;
+    --dark-overlay: rgba(0, 0, 0, 0.5);
+    --light-bg: rgba(255, 255, 255, 0.95);
+    --text-dark: #333;
+    --text-light: #fff;
+    --border-radius: 8px;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: var(--text-dark);
-  line-height: 1.6;
-  overflow-x: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
 }
 
 
@@ -66,7 +66,7 @@ body {
     display: flex;
     flex-direction: column;
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-                url('trento-bg.jpg') center/cover no-repeat;
+        url('trento-bg.jpg') center/cover no-repeat;
     position: relative;
 }
 
@@ -252,7 +252,7 @@ body {
 .hero-background {
     min-height: 100vh;
     background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-                url('trento-bg.jpg') center/cover no-repeat;
+        url('trento-bg.jpg') center/cover no-repeat;
     background-attachment: fixed;
 }
 
@@ -329,7 +329,8 @@ nav {
     color: var(--text-light);
 }
 
-.btn-search, .btn-generate {
+.btn-search,
+.btn-generate {
     padding: 15px 50px;
     border: none;
     border-radius: var(--border-radius);
@@ -342,7 +343,8 @@ nav {
     transition: all 0.3s ease;
 }
 
-.btn-search:hover, .btn-generate:hover {
+.btn-search:hover,
+.btn-generate:hover {
     background: #e68917;
     transform: scale(1.05);
 }
@@ -415,22 +417,6 @@ nav {
     margin-bottom: 8px;
 }
 
-.itinerary-cover-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    margin-bottom: 0;
-}
-
-.activity-main-image {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    border-radius: var(--border-radius);
-    margin-bottom: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
 
 /* ====================================
    SISTEMA NOTIFICHE TOAST
@@ -490,10 +476,23 @@ nav {
 }
 
 @keyframes heartbeat {
-    0%, 100% { transform: scale(1); }
-    25% { transform: scale(1.3); }
-    50% { transform: scale(1); }
-    75% { transform: scale(1.2); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.3);
+    }
+
+    50% {
+        transform: scale(1);
+    }
+
+    75% {
+        transform: scale(1.2);
+    }
 }
 
 .popup-btn-favorite {
@@ -525,8 +524,15 @@ nav {
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 .implementation-banner h2 {
@@ -779,8 +785,13 @@ nav {
     background: #ddd;
 }
 
-.divider::before { left: 0; }
-.divider::after { right: 0; }
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
 
 .divider span {
     background: var(--light-bg);
@@ -925,9 +936,17 @@ nav {
     margin-right: 5px;
 }
 
-.marker-icon.green { color: #4caf50; }
-.marker-icon.blue { color: #2196f3; }
-.marker-icon.red { color: #f44336; }
+.marker-icon.green {
+    color: #4caf50;
+}
+
+.marker-icon.blue {
+    color: #2196f3;
+}
+
+.marker-icon.red {
+    color: #f44336;
+}
 
 .poi-input {
     width: 100%;
@@ -1187,10 +1206,6 @@ nav {
         max-width: calc(100% - 20px);
     }
 
-    .modal-poi-image,
-    .activity-main-image {
-        height: 200px;
-    }
 }
 
 @media (max-width: 480px) {

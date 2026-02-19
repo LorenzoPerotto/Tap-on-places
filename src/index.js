@@ -27,10 +27,7 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // ----- Middleware globali -----
-app.use(cors({
-  origin: 'https://tap-on-places-frontend.onrender.com',
-  credentials: true
-}));
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 
 app.use(express.json());
 

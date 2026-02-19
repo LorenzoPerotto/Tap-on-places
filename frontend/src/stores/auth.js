@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('auth', () => {
   // Stato per la registrazione con conferma
   const awaitingConfirmation = ref(false)
   const pendingEmail = ref(null)
+  const pendingCodice = ref(null)
 
   const isAuthenticated = computed(() => !!token.value)
   const isAdmin = computed(() => user.value?.isComunale === true)
@@ -47,8 +48,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const pendingCodice = ref(null)
-
   async function register(data) {
     try {
       const response = await api.auth.register(data)
@@ -69,6 +68,7 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await api.auth.confirm({ email, codice: Number(codice) })
       awaitingConfirmation.value = false
       pendingEmail.value = null
+      pendingCodice.value = null
       return { success: true, message: response.data.message }
     } catch (error) {
       return {

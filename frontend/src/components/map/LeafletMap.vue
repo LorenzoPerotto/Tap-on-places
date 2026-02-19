@@ -73,7 +73,6 @@ function updateMarkers() {
 
     const popupContent = `
       <div class="popup-content">
-        ${poi.image ? `<img src="${poi.image}" class="popup-image" alt="${poi.nome}">` : ''}
         <h3 class="popup-title">${poi.nome}</h3>
         <p class="popup-description">${poi.descrizione || ''}</p>
       </div>
@@ -106,13 +105,7 @@ function updateMarkers() {
   min-width: 200px;
 }
 
-.popup-image {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 10px;
-}
+
 
 .popup-title {
   font-size: 18px;

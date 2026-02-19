@@ -51,12 +51,6 @@
           :key="itinerary._id"
           class="itinerary-result"
         >
-          <img 
-            v-if="itinerary.coverImage"
-            :src="itinerary.coverImage"
-            :alt="itinerary.nome"
-            class="itinerary-cover-image"
-          >
 
           <FavoriteIcon
             v-if="authStore.isAuthenticated"
@@ -86,6 +80,34 @@
         </button>
       </div>
     </main>
+
+    <!-- Modal dettagli itinerario -->
+    <Transition name="modal">
+      <div v-if="selectedItinerary" class="modal-overlay" @click.self="selectedItinerary = null">
+        <div class="modal-content">
+          <button class="modal-close" @click="selectedItinerary = null">&times;</button>
+          <h2>🗺️ {{ selectedItinerary.nome }}</h2>
+          <div class="modal-details">
+            <p v-if="selectedItinerary.descrizione"><strong>📝 Descrizione:</strong> {{ selectedItinerary.descrizione }}</p>
+            <p v-if="selectedItinerary.tipologia"><strong>🎯 Tipologia:</strong> {{ selectedItinerary.tipologia }}</p>
+            <p v-if="selectedItinerary.tempo"><strong>⏱️ Durata:</strong> {{ selectedItinerary.tempo }} minuti</p>
+            <p v-if="selectedItinerary.budget"><strong>💰 Budget:</strong> €{{ selectedItinerary.budget }}</p>
+          </div>
+          <div v-if="selectedItinerary.activitiesDetails && selectedItinerary.activitiesDetails.length > 0" class="modal-activities">
+            <h3>📍 Tappe dell'itinerario</h3>
+            <div v-for="(act, index) in selectedItinerary.activitiesDetails" :key="act._id" class="modal-activity-item">
+              <span class="activity-number">{{ index + 1 }}</span>
+              <div class="activity-detail-info">
+                <strong>{{ act.nome }}</strong>
+                <small v-if="act.tipo">🏷️ {{ act.tipo }}</small>
+                <small v-if="act.tempo">⏱️ {{ act.tempo }} min</small>
+                <small v-if="act.budget">💰 €{{ act.budget }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -106,6 +128,7 @@ const toastStore = useToastStore()
 const loading = ref(false)
 const searched = ref(false)
 const results = ref([])
+const selectedItinerary = ref(null)
 
 const filters = ref({
   tipologia: '',
@@ -121,12 +144,6 @@ async function searchItineraries() {
     const response = await api.itineraries.searchWithFilters(filters.value)
     results.value = response.data
 
-    // Aggiungi immagini di copertina
-    results.value = results.value.map(it => ({
-      ...it,
-      coverImage: getCoverImage(it.tipologia)
-    }))
-
     toastStore.success(`Trovati ${results.value.length} itinerari`)
   } catch (error) {
     console.error('Error searching itineraries:', error)
@@ -137,19 +154,27 @@ async function searchItineraries() {
   }
 }
 
-function getCoverImage(tipologia) {
-  const images = {
-    'Storico': 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800',
-    'Culturale': 'https://images.unsplash.com/photo-1565911783875-5238b2a76a13?w=800',
-    'Natura': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-    'Enogastronomico': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800',
-    'Sportivo': 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800'
-  }
-  return images[tipologia] || 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800'
-}
 
-function viewItinerary(itinerary) {
-  toastStore.info(`Visualizzazione itinerario: ${itinerary.nome}`)
+async function viewItinerary(itinerary) {
+  try {
+    const response = await api.itineraries.getById(itinerary._id)
+    const details = response.data
+
+    // Carica le attività dell'itinerario se ci sono activities IDs
+    let activitiesDetails = []
+    if (details.activities && details.activities.length > 0) {
+      const actPromises = details.activities.map(actId => 
+        api.activities.getById(actId).then(r => r.data).catch(() => null)
+      )
+      activitiesDetails = (await Promise.all(actPromises)).filter(Boolean)
+    }
+
+    selectedItinerary.value = { ...itinerary, ...details, activitiesDetails }
+  } catch (error) {
+    console.error('Error loading itinerary details:', error)
+    // Fallback: mostra quello che abbiamo
+    selectedItinerary.value = { ...itinerary, activitiesDetails: [] }
+  }
 }
 
 function clearFilters() {
@@ -257,11 +282,6 @@ function clearFilters() {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
-.itinerary-cover-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
 
 .itinerary-info {
   padding: 20px;
@@ -338,5 +358,121 @@ function clearFilters() {
   .results-container {
     grid-template-columns: 1fr;
   }
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #999;
+  font-weight: bold;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-content h2 {
+  color: #0066cc;
+  margin-bottom: 20px;
+  padding-right: 30px;
+}
+
+.modal-details {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.modal-details p {
+  margin-bottom: 8px;
+  color: #333;
+  line-height: 1.6;
+}
+
+.modal-activities h3 {
+  color: #0066cc;
+  margin-bottom: 15px;
+}
+
+.modal-activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.activity-number {
+  width: 28px;
+  height: 28px;
+  background: #f7941d;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.activity-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.activity-detail-info strong {
+  color: #333;
+  font-size: 14px;
+}
+
+.activity-detail-info small {
+  color: #888;
+  font-size: 12px;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
 }
 </style>
